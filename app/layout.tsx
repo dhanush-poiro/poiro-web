@@ -3,7 +3,12 @@ import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import Navbar from "@/components/Navbar";
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Poiro — Engineering Creativity | AI-Powered Brand Storytelling",
   description:
     "Where AI meets brand storytelling. Poiro is the operating system for storytelling — ship more, spend less, create without limits.",

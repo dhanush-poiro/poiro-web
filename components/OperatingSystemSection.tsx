@@ -17,44 +17,44 @@ interface Service {
 const SERVICES: Service[] = [
   {
     num: "01",
-    label: "Curate Context",
-    title: "Brand Cosmos",
-    desc: "Tap into a living universe of trends and audience signals to create content your consumers can't scroll past. Tracking the best brands and creators in your category, Brand Cosmos parses thousands of hours of content to surface the most compelling ideas, storylines, visual concepts and hooks, so inspiration is never more than a search away. Stay ahead of the curve, always.",
+    label: "Curate & Ideate",
+    title: "Ideation Agent",
+    desc: "Tap into a living universe of trends and audience signals to create content your consumers can't scroll past. Tracking the best brands and creators in your category, our Ideation Agent parses thousands of hours of content to surface the most compelling ideas, storylines, visual concepts and hooks, so inspiration is never more than a search away. Stay ahead of the curve, always.",
     img: "/os/brand-cosmos.webp",
     video: "/os/Brand-Cosmos.mp4",
-    imgAlt: "Brand Cosmos",
+    imgAlt: "Ideation Agent",
   },
   {
     num: "02",
-    label: "Ideate & Communicate",
-    title: "Atlas",
-    desc: "Where great ideas become brilliant briefs, and creative teams finally work as one. Ideate with an intelligent briefing agent, curate references from across the web, generate samples and manage feedback, all in one place, so your creative team nails it on the very first iteration. From first spark to final delivery, all in one place.",
+    label: "Collaborate",
+    title: "Briefing, Asset & Project Management",
+    desc: "Where great ideas become brilliant briefs, and creative teams finally work as one. Ideate with an intelligent briefing agent, curate references from across the web, generate samples and manage feedback — all in one place, so your creative team nails it on the very first iteration. From first spark to final delivery, all in one place.",
     img: "/os/atlas.webp",
-    imgAlt: "Atlas",
+    imgAlt: "Briefing & Asset Management",
   },
   {
     num: "03",
-    label: "Create Limitlessly",
-    title: "Infinite Flow",
+    label: "Create limitlessly",
+    title: "Flowboards",
     desc: "From six-second hooks to full-scale TVCs, unleash visual stories at a scale you never thought possible. Collaboratively build creative workflows, choose from 100+ AI models and proprietary pipelines, and take precise control over every step across every channel, every format, every brief. Your imagination is the only limit.",
     img: "/os/infinite-flow.webp",
-    imgAlt: "Infinite Flow",
+    imgAlt: "Flowboards",
   },
   {
     num: "04",
     label: "Build Apps",
-    title: "App Studio",
+    title: "App Builder",
     desc: "Turn your creative workflows into powerful no-code apps, so your best ideas scale without limits. Convert even your most complex creative workflows into simple, intuitive apps and put the power of world-class content creation in the hands of everyone in your organisation. Build once, create forever.",
     img: "/os/appstudio.webp",
-    imgAlt: "App Studio",
+    imgAlt: "App Builder",
   },
   {
     num: "05",
     label: "Final Touch",
-    title: "Poiro Studio",
-    desc: "Polish every pixel, perfect every frame. AI-powered editing, entirely on your terms. Edit images and videos with a level of precision and finesse that was once the preserve of the most skilled editors because no one understands your creative vision better than you. Because the details are everything.",
+    title: "AI Editing Studio",
+    desc: "Polish every pixel, perfect every frame. AI-powered editing, entirely on your terms. Edit images and videos with a level of precision and finesse that was once the preserve of the most skilled editors — because no one understands your creative vision better than you. Because the details are everything.",
     img: "/os/poiro-studio.webp",
-    imgAlt: "Poiro Studio",
+    imgAlt: "AI Editing Studio",
   },
 ];
 
@@ -83,6 +83,7 @@ export default function OperatingSystemSection() {
       `}</style>
 
       <section
+        id="os-section"
         className="os-section"
         style={{
           backgroundColor: "#000000",
@@ -90,6 +91,7 @@ export default function OperatingSystemSection() {
           fontFamily: "'Roboto', sans-serif",
           position: "relative",
           zIndex: 10,
+          scrollMarginTop: "80px",
         }}
       >
         {/* ── Section header ──────────────────────────────────── */}
@@ -131,7 +133,7 @@ export default function OperatingSystemSection() {
           >
             An Operating System
             <br />
-            <em style={{ fontWeight: 300 }}>for Storytelling.</em>
+            <em style={{ fontWeight: 300 }}>to Scale Storytelling.</em>
           </h2>
 
           {/* Subline */}
@@ -143,11 +145,11 @@ export default function OperatingSystemSection() {
               color: "rgba(255, 255, 255, 0.35)",
               marginTop: 24,
               lineHeight: 1.7,
-              maxWidth: 480,
+              maxWidth: 520,
             }}
           >
-            Five interconnected modules. One creative operating system
-            built to take your story from idea to impact.
+            For Brand Managers &amp; Creative Teams — the only AI OS you need
+            to take your story from idea to impact, without the chaos.
           </p>
         </div>
 
@@ -290,39 +292,75 @@ export default function OperatingSystemSection() {
         <div
           style={{
             display: "flex",
-            justifyContent: "center",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 16,
             marginTop: "clamp(48px, 8vh, 96px)",
           }}
         >
           <a
-            href="mailto:founders@redomedia.co"
+            href="https://calendly.com/sameer-poiro/poiro-introduction-with-founders"
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               display: "inline-flex",
               alignItems: "center",
-              padding: "14px 32px",
-              border: "1px solid rgba(255, 255, 255, 0.18)",
-              borderRadius: 10,
-              backgroundColor: "transparent",
-              color: "rgba(240, 234, 222, 0.75)",
-              fontFamily: "'Roboto', sans-serif",
-              fontSize: 15,
-              fontWeight: 400,
-              letterSpacing: "0.2px",
+              gap: 14,
+              padding: "18px 48px",
+              background:
+                "linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(240,234,222,0.94) 100%)",
+              borderRadius: 14,
+              color: "#0c0c0c",
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: "clamp(16px, 1.4vw, 21px)",
+              fontWeight: 500,
+              fontStyle: "italic",
+              letterSpacing: "0.02em",
               textDecoration: "none",
               cursor: "pointer",
-              transition: "all 0.3s ease",
+              boxShadow:
+                "0 4px 24px rgba(255,255,255,0.12), 0 1px 6px rgba(0,0,0,0.4)",
+              transition:
+                "transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s cubic-bezier(0.16,1,0.3,1)",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)";
-              e.currentTarget.style.color = "rgba(240,234,222,1)";
+              e.currentTarget.style.transform = "translateY(-4px) scale(1.02)";
+              e.currentTarget.style.boxShadow =
+                "0 12px 48px rgba(255,255,255,0.22), 0 4px 16px rgba(0,0,0,0.5)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)";
-              e.currentTarget.style.color = "rgba(240,234,222,0.75)";
+              e.currentTarget.style.transform = "translateY(0) scale(1)";
+              e.currentTarget.style.boxShadow =
+                "0 4px 24px rgba(255,255,255,0.12), 0 1px 6px rgba(0,0,0,0.4)";
             }}
           >
             Build Your Vision With Us
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M3.5 9h11M9.5 4l5 5-5 5"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </a>
+          <span
+            style={{
+              fontFamily: "'Roboto', sans-serif",
+              fontSize: "clamp(11px, 0.85vw, 13px)",
+              color: "rgba(255,255,255,0.25)",
+              letterSpacing: "0.5px",
+            }}
+          >
+            Book a free intro call with the founders
+          </span>
         </div>
       </section>
     </>

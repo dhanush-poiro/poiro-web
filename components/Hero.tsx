@@ -69,9 +69,13 @@ export default function Hero() {
     /* Scroll-driven scale-back — card shrinks as About slides over it */
     const onScroll = () => {
       const progress = Math.min(1, window.scrollY / window.innerHeight);
+      // Fade card out completely once sections have scrolled past it
+      const cardOpacity = Math.max(0, 1 - Math.max(0, (progress - 0.55) * 2.5));
       gsap.set(card, {
         scale:        1 - progress * 0.055,
         borderRadius: `${16 + progress * 12}px`,
+        opacity:      cardOpacity,
+        pointerEvents: cardOpacity < 0.05 ? 'none' : 'auto',
       });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -207,7 +211,7 @@ export default function Hero() {
           <h1 className={styles.heading}>
             Engineering Creativity.
           </h1>
-          <a href="#send-idea" className={styles.ctaBtn} id="hero-cta">
+          <a href="https://calendly.com/sameer-poiro/poiro-introduction-with-founders" className={styles.ctaBtn} id="hero-cta" target="_blank" rel="noopener noreferrer">
             Book Demo
           </a>
         </div>

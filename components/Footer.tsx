@@ -139,7 +139,6 @@ export default function Footer() {
           {/* Bottom bar — inside the card */}
           <div ref={bottomBarRef} className={styles.bottomBar}>
             <p className={styles.copyright}>© 2026 Poiro&nbsp;|&nbsp;All Rights Reserved</p>
-            <a href="mailto:founders@poiro.co" className={styles.email}>founders@poiro.co</a>
             <nav className={styles.links} aria-label="Footer navigation">
               <a href="#" className={styles.link}>Services</a>
               <a href="#" className={styles.link}>Featured Work</a>

@@ -92,12 +92,12 @@ export default function Navbar() {
       </a>
 
       <ul style={links} role="list">
-        <li><a href="#storytelling" style={link}>Services</a></li>
-        <li><a href="#gallery"      style={link}>Featured Work</a></li>
-        <li><a href="#send-idea"    style={link}>Reviews</a></li>
+        <li><a href="#os-section" style={link}>Poiroscope OS</a></li>
+        <li><a href="#gallery"    style={link}>Featured Work</a></li>
+        <li><a href="#send-idea"  style={link}>Upload Brief</a></li>
       </ul>
 
-      <a href="#send-idea" style={cta} id="nav-cta">Get in Touch</a>
+      <a href="https://calendly.com/sameer-poiro/poiro-introduction-with-founders" target="_blank" rel="noopener noreferrer" style={cta} id="nav-cta">Get in Touch</a>
     </div>
   );
 }

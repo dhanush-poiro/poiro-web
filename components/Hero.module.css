@@ -112,7 +112,7 @@
   text-align: center;
   gap: var(--hero-gap);
   padding: 0 var(--space-3);
-  will-change: transform, opacity;
+  isolation: isolate;
 }
 
 .heading {

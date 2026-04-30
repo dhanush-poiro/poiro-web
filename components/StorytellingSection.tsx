@@ -127,7 +127,7 @@ export default function StorytellingSection() {
             opacity: 0,
           }}
         >
-          Storytelling ≠ Prompting
+          Prompting /= Storytelling
         </h2>
 
         {/* Description */}
@@ -143,11 +143,10 @@ export default function StorytellingSection() {
             opacity: 0,
           }}
         >
-          Effective brand storytelling is built in layers, like a well-crafted
-          burger. Each element works together to build strong brand identity,
-          drive engagement, and create lasting recall. Poiro engineers every
-          layer with precision, so your brand only has to show up with what no
-          one else has: your secret sauce.
+          Great brand storytelling is built in layers — like a well-crafted
+          burger. Each layer drives identity, engagement, and recall. Poiro
+          engineers every layer with precision, so you only need to bring one
+          thing: your secret sauce.
         </p>
       </div>
     </section>

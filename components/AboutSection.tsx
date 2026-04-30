@@ -18,10 +18,10 @@ const inter = Inter({
 });
 
 const LINES = [
-  'We build the creative operating system that empowers',
-  'ambitious brands to scale their storytelling.',
-  'Combining intelligent curation with limitless generation,',
-  'Poiro engineers the future of your content.',
+  'We build the AI-native creative OS for ambitious',
+  'brands to scale storytelling. Poiroscope blends',
+  'human & AI to transform bold ideas into high-quality,',
+  'production-ready content for every channel.',
 ];
 
 interface CharItem { char: string; br: boolean }
@@ -106,7 +106,7 @@ export default function AboutSection() {
             </svg>
             <div className={styles.badgeText}>
               <span className={styles.badgeCount}>Powering</span>
-              <span className={styles.badgeLabel}>Creative Teams</span>
+              <span className={styles.badgeLabel}>Brands</span>
             </div>
             <svg width="32" height="54" viewBox="0 0 20 34" fill="none" aria-hidden="true" className={`${styles.bracketSvg} ${styles.bracketFlip}`}>
               <path d="M16 2C12 6 9 11 9 17S12 28 16 32" stroke="#fff" strokeWidth="1" fill="none"/>

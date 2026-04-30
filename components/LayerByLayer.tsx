@@ -18,7 +18,7 @@ export default function LayerByLayer() {
   const sectionRef  = useRef<HTMLElement>(null);
   const videoWrapRef = useRef<HTMLDivElement>(null);
   const headingRef  = useRef<HTMLHeadingElement>(null);
-  const itemsRef    = useRef<HTMLUListElement>(null);
+  const itemsRef    = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!sectionRef.current) return;
@@ -64,7 +64,7 @@ export default function LayerByLayer() {
       );
 
       /* Bullet items: staggered scrub */
-      const items = itemsRef.current?.querySelectorAll(".layer-item");
+      const items = itemsRef.current?.querySelectorAll<HTMLElement>(".layer-item");
       if (items && items.length > 0) {
         items.forEach((item, i) => {
           gsap.fromTo(
@@ -156,7 +156,7 @@ export default function LayerByLayer() {
             </div>
           </div>
 
-          {/* Right — text */}
+          {/* Right — stacked rectangles */}
           <div>
             <h2
               ref={headingRef}
@@ -167,63 +167,85 @@ export default function LayerByLayer() {
                 letterSpacing: "-0.02em",
                 lineHeight: 1.1,
                 color: "var(--color-text-primary)",
-                marginBottom: "40px",
+                marginBottom: "32px",
                 opacity: 0,
               }}
             >
               Built Layer by Layer
             </h2>
 
-            <ul
+            <div
               ref={itemsRef}
               style={{
-                listStyle: "none",
-                padding: 0,
-                margin: 0,
                 display: "flex",
                 flexDirection: "column",
-                gap: "24px",
+                gap: 0,
               }}
             >
               {LAYERS.map((layer, index) => (
-                <li
+                <div
                   key={layer.label}
                   className="layer-item"
                   style={{
-                    display: "flex",
-                    alignItems: "flex-start",
+                    display: "grid",
+                    gridTemplateColumns: "2.5rem 1fr auto",
+                    alignItems: "center",
                     gap: "16px",
+                    padding: "16px 20px",
+                    borderTop: index === 0
+                      ? "1px solid rgba(255,255,255,0.10)"
+                      : "1px solid rgba(255,255,255,0.06)",
+                    borderBottom: index === LAYERS.length - 1
+                      ? "1px solid rgba(255,255,255,0.10)"
+                      : "none",
                     opacity: 0,
+                    transition: "background 0.2s ease",
                   }}
                 >
-                  <span
-                    style={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: "50%",
-                      background: "var(--color-primary)",
-                      flexShrink: 0,
-                      marginTop: "0.55em",
-                    }}
-                  />
+                  {/* Number */}
                   <span
                     style={{
                       fontFamily: "var(--font-family)",
-                      fontSize: "clamp(18px, 1.5vw, 22px)",
-                      color: "var(--color-text-primary)",
-                      lineHeight: 1.6,
+                      fontSize: "clamp(10px, 0.85vw, 12px)",
+                      fontWeight: 600,
+                      color: "var(--color-primary)",
+                      letterSpacing: "0.05em",
+                      lineHeight: 1,
                     }}
                   >
-                    <strong style={{ fontWeight: 700 }}>
-                      {layer.label}:
-                    </strong>{" "}
-                    <span style={{ color: "var(--color-text-secondary)" }}>
-                      {layer.detail}
-                    </span>
+                    0{index + 1}
                   </span>
-                </li>
+
+                  {/* Label */}
+                  <span
+                    style={{
+                      fontFamily: "var(--font-family)",
+                      fontSize: "clamp(15px, 1.3vw, 19px)",
+                      fontWeight: 600,
+                      color: "var(--color-text-primary)",
+                      letterSpacing: "-0.01em",
+                    }}
+                  >
+                    {layer.label}
+                  </span>
+
+                  {/* Detail */}
+                  <span
+                    style={{
+                      fontFamily: "var(--font-family)",
+                      fontSize: "clamp(11px, 0.9vw, 13px)",
+                      fontWeight: 400,
+                      color: "var(--color-text-secondary)",
+                      textAlign: "right",
+                      maxWidth: 180,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {layer.detail}
+                  </span>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         </div>
       </section>

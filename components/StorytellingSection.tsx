@@ -67,7 +67,7 @@ export default function StorytellingSection() {
       ref={sectionRef}
       id="storytelling"
       style={{
-        padding: "120px 24px 48px",
+        padding: "clamp(72px, 10vw, 120px) 24px clamp(40px, 5vw, 64px)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -108,7 +108,7 @@ export default function StorytellingSection() {
               fontWeight: 600,
             }}
           >
-            The Foundation
+            The Difference
           </span>
         </div>
 
@@ -117,7 +117,7 @@ export default function StorytellingSection() {
           ref={headingRef}
           style={{
             fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontSize: "clamp(40px, 7vw, 80px)",
+            fontSize: "clamp(36px, 6vw, 76px)",
             fontWeight: 400,
             lineHeight: 1.05,
             letterSpacing: "-0.02em",
@@ -127,7 +127,8 @@ export default function StorytellingSection() {
             opacity: 0,
           }}
         >
-          Prompting /= Storytelling
+          Prompting is not{" "}
+          <em style={{ fontStyle: "italic" }}>Storytelling.</em>
         </h2>
 
         {/* Description */}
@@ -135,18 +136,18 @@ export default function StorytellingSection() {
           ref={descRef}
           style={{
             fontFamily: "var(--font-family)",
-            fontSize: "clamp(1rem, 1.5vw, 1.3rem)",
+            fontSize: "clamp(0.95rem, 1.4vw, 1.25rem)",
             color: "var(--color-text-secondary)",
             lineHeight: 1.7,
-            maxWidth: 800,
+            maxWidth: 760,
             margin: "0 auto",
             opacity: 0,
           }}
         >
-          Great brand storytelling is built in layers — like a well-crafted
-          burger. Each layer drives identity, engagement, and recall. Poiro
-          engineers every layer with precision, so you only need to bring one
-          thing: your secret sauce.
+          Great AI brand content requires more than good prompts. It demands a
+          creative system — built for how brands actually work, with the
+          guardrails, workflows, and intelligence to go from idea to impact,
+          every time.
         </p>
       </div>
     </section>

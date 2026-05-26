@@ -124,6 +124,8 @@ html {
   scroll-behavior: auto; /* Lenis handles smooth scroll */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Prevent width jumps from overlay scrollbars on Mac vs Windows reserved scrollbar */
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -133,6 +135,9 @@ body {
   color: var(--color-text-primary);
   line-height: 1.6;
   overflow-x: hidden;
+  /* Prevent iOS Safari from auto-scaling fonts on orientation change */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 a {

@@ -20,8 +20,9 @@ const inter = Inter({
 const LINES = [
   'We build the AI-native creative OS for ambitious',
   'brands to scale storytelling. Poiroscope blends',
-  'human & AI to transform bold ideas into high-quality,',
-  'production-ready content for every channel.',
+  'human & AI to transform bold ideas into',
+  'high-quality, production-ready ',
+  'content for every channel.',
 ];
 
 interface CharItem { char: string; br: boolean }

@@ -191,13 +191,11 @@ export default function MasonryGallerySection() {
           background: "#000",
           position: "relative",
           zIndex: 10,
-          paddingTop:    "clamp(120px, 16vw, 200px)",
-          paddingBottom: "clamp(80px,  10vw, 140px)",
-          paddingLeft:   "clamp(18px,  4vw,  48px)",
-          paddingRight:  "clamp(18px,  4vw,  48px)",
+          paddingTop:    "clamp(100px, 12vw, 180px)",
+          paddingBottom: "clamp(72px,  8vw, 130px)",
         }}
       >
-        <div style={{ maxWidth: 1400, margin: "0 auto", width: "100%" }}>
+        <div style={{ maxWidth: "min(1280px, 88vw)", margin: "0 auto", width: "100%" }}>
 
           {/* ── Header ──────────────────────────────────────── */}
           <div style={{ paddingLeft: "clamp(6px,1vw,14px)", paddingRight: "clamp(6px,1vw,14px)" }}>

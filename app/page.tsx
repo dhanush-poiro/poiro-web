@@ -5,6 +5,7 @@ import StorytellingSection from "@/components/StorytellingSection";
 import LayerByLayer from "@/components/LayerByLayer";
 import OperatingSystemSection from "@/components/OperatingSystemSection";
 import VideoScrub from "@/components/VideoScrub";
+import GetStartedSection from "@/components/GetStartedSection";
 import MasonryGallerySection from "@/components/MasonryGallerySection";
 import BriefCTASection from "@/components/BriefCTASection";
 import Footer from "@/components/Footer";
@@ -16,7 +17,7 @@ export default function Home() {
   return (
     <>
       {/* Sticky so Hero stays pinned while About card slides over it */}
-      <div style={{ position: 'sticky', top: 0, height: '100vh', zIndex: 0, overflow: 'hidden' }}>
+      <div style={{ position: 'sticky', top: 0, height: '100dvh', zIndex: 0, overflow: 'hidden' }}>
         <Hero />
       </div>
       <AboutSection />
@@ -25,6 +26,7 @@ export default function Home() {
       <LayerByLayer />
       <OperatingSystemSection />
       {SHOW_BRIEF_SECTION && <VideoScrub />}
+      <GetStartedSection />
       <MasonryGallerySection />
       <BriefCTASection />
       <Footer />

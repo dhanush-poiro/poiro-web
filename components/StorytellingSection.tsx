@@ -67,7 +67,7 @@ export default function StorytellingSection() {
       ref={sectionRef}
       id="storytelling"
       style={{
-        padding: "clamp(72px, 10vw, 120px) 24px clamp(40px, 5vw, 64px)",
+        padding: "clamp(52px, 10vw, 120px) clamp(20px, 5vw, 24px) clamp(36px, 5vw, 64px)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -117,7 +117,7 @@ export default function StorytellingSection() {
           ref={headingRef}
           style={{
             fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontSize: "clamp(36px, 6vw, 76px)",
+            fontSize: "clamp(30px, 6vw, 76px)",
             fontWeight: 400,
             lineHeight: 1.05,
             letterSpacing: "-0.02em",

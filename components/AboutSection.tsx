@@ -49,26 +49,39 @@ const IMAGE_LOGOS = [
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
+// Non-breaking space to prevent word wrap within desktop lines
+const NBSP = ' ';
+
 export default function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [prog, setProg]   = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const chars = useMemo(() => buildChars(LINES), []);
   const total = chars.length;
 
   useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth <= 768);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
+    // Mobile: skip scroll listener entirely — plain text is always fully visible
+    if (isMobile) {
+      setProg(1);
+      return;
+    }
     const onScroll = () => {
       const rect = el.getBoundingClientRect();
-      // Start counting when the section top enters the viewport (rect.top = innerHeight).
-      // At rect.top = 0 (section fully filling frame) prog = innerHeight / offsetHeight = 0.25
-      // so the text is already 25% revealed by the time the section covers the screen.
       setProg(Math.max(0, Math.min(1, (window.innerHeight - rect.top) / el.offsetHeight)));
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [isMobile]);
 
   const textProg = Math.min(1, prog / 0.85);
   const charOp   = (i: number) => {
@@ -85,14 +98,22 @@ export default function AboutSection() {
 
         {/* ── Animated paragraph ── */}
         <div className={styles.textWrap}>
-          {chars.map((c, i) => (
-            <span key={i}>
-              {c.br && <br />}
-              <span style={{ color: `rgba(240,234,222,${charOp(i).toFixed(3)})` }}>
-                {c.char === ' ' ? '\u00A0' : c.char}
-              </span>
+          {isMobile ? (
+            // On mobile: single static span — no per-char DOM nodes, no scroll jitter
+            <span style={{ color: 'rgba(240,234,222,0.95)' }}>
+              {LINES.join(' ')}
             </span>
-          ))}
+          ) : (
+            // Desktop: per-character scroll-driven opacity reveal with non-breaking spaces
+            chars.map((c, i) => (
+              <span key={i}>
+                {c.br && <br />}
+                <span style={{ color: `rgba(240,234,222,${charOp(i).toFixed(3)})` }}>
+                  {c.char === ' ' ? NBSP : c.char}
+                </span>
+              </span>
+            ))
+          )}
         </div>
 
         {/* ── Logo band ── */}
@@ -127,7 +148,7 @@ export default function AboutSection() {
                     alt=""
                     aria-hidden="true"
                     style={{
-                      height: 64, /* Increased layout height instead of scaling */
+                      height: 'clamp(28px, 5.5vw, 64px)',
                       width: 'auto',
                       objectFit: 'contain',
                       display: 'block',
@@ -150,7 +171,7 @@ export default function AboutSection() {
                     alt=""
                     aria-hidden="true"
                     style={{
-                      height: 64, /* Increased layout height instead of scaling */
+                      height: 'clamp(28px, 5.5vw, 64px)',
                       width: 'auto',
                       objectFit: 'contain',
                       display: 'block',

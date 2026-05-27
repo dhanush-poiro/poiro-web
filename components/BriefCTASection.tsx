@@ -13,8 +13,8 @@ const FOLDER_IMAGES = [
 ];
 
 // ── 3D folder with fanning images ─────────────────────────────────────────────
-function AnimatedFolder({ isHovered }: { isHovered: boolean }) {
-  const W = 88, H = 64;
+function AnimatedFolder({ isHovered, scale = 1 }: { isHovered: boolean; scale?: number }) {
+  const W = Math.round(88 * scale), H = Math.round(64 * scale);
   const tabW = Math.round(W * 0.35);
   const tabH = Math.round(H * 0.25);
   const ease = "cubic-bezier(0.16, 1, 0.3, 1)";
@@ -39,11 +39,11 @@ function AnimatedFolder({ isHovered }: { isHovered: boolean }) {
 
         {/* Stacked preview images */}
         {FOLDER_IMAGES.map((src, i) => {
-          const x  = isHovered ? (i - 1) * 45   : 0;
-          const y  = isHovered ? -65 - (2 - i) * 5  : -6 - (2 - i) * 2;
-          const r  = isHovered ? (i - 1) * 15   : (i - 1) * 3;
-          const w  = isHovered ? 112 : 52;
-          const h  = isHovered ? 76  : 36;
+          const x  = isHovered ? (i - 1) * Math.round(45 * scale)  : 0;
+          const y  = isHovered ? -Math.round(65 * scale) - (2 - i) * Math.round(5 * scale) : -6 - (2 - i) * 2;
+          const r  = isHovered ? (i - 1) * 15  : (i - 1) * 3;
+          const w  = isHovered ? Math.round(112 * scale) : Math.round(52 * scale);
+          const h  = isHovered ? Math.round(76  * scale) : Math.round(36 * scale);
           const d  = `${i * 0.035}s`;
           return (
             <div
@@ -97,7 +97,15 @@ export default function BriefCTASection() {
   const [files,        setFiles]        = useState<File[]>([]);
   const [uploadMsg,    setUploadMsg]    = useState("");
   const [formData,     setFormData]     = useState<BriefFormData>({ name: "", email: "", company: "", brief: "" });
+  const [isMobile,     setIsMobile]     = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth <= 768);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   // Escape key closes modal
   useEffect(() => {
@@ -227,7 +235,7 @@ export default function BriefCTASection() {
       style={{
         position: "relative", width: "100%", background: "#020202",
         color: "#fff", overflow: "hidden", zIndex: 10,
-        padding: "clamp(100px, 10vw, 180px) clamp(16px, 3vw, 48px)",
+        padding: "clamp(64px, 10vw, 180px) clamp(16px, 3vw, 48px)",
         display: "flex", justifyContent: "center",
       }}
     >
@@ -353,7 +361,43 @@ export default function BriefCTASection() {
           background: none; border: none; cursor: pointer; flex-shrink: 0; transition: color 0.15s ease;
         }
         .brief-file-remove:hover { color: rgb(248,113,113); }
+
+        /* ── Mobile card sizing ── */
+        @media (max-width: 768px) {
+          .brief-upload-card {
+            min-height: 0 !important;
+            padding: clamp(28px, 5vw, 40px) clamp(16px, 4vw, 28px) clamp(28px, 5vw, 40px) !important;
+            border-radius: 20px !important;
+          }
+          .brief-folder-wrap { display: none !important; }
+          .brief-helper-text { display: none !important; }
+          .brief-dash-border rect { stroke-opacity: 0.35; stroke-dasharray: 5 7; }
+        }
+
+        /* ── Mobile modal ── */
+        @media (max-width: 600px) {
+          .brief-overlay { padding: 0; align-items: flex-end; }
+          .brief-panel {
+            width: 100%; max-height: 92dvh;
+            border-radius: 20px 20px 0 0;
+          }
+          .brief-panel-header { padding: 16px 18px; }
+          .brief-panel-body   { padding: 18px 18px 20px; gap: 14px; }
+          .brief-input  { height: 48px; font-size: 16px; }
+          .brief-textarea { min-height: 110px; font-size: 16px; }
+          .brief-actions { padding-top: 14px; gap: 8px; }
+          .brief-btn    { height: 48px; font-size: 14px; }
+          .brief-dropzone { padding: 20px 12px; }
+          .brief-grid-2 { grid-template-columns: 1fr !important; }
+        }
       `}</style>
+
+      {/* Section top gradient — hides 1px boundary artifact vs. MasonryGallery */}
+      <div style={{
+        position: "absolute", top: 0, left: 0, right: 0, height: 48,
+        background: "linear-gradient(to bottom, #000 0%, transparent 100%)",
+        zIndex: 5, pointerEvents: "none",
+      }} />
 
       {/* Aurora WebGL glow */}
       <Aurora
@@ -370,7 +414,7 @@ export default function BriefCTASection() {
       }}>
 
         {/* Header */}
-        <div style={{ width: "100%", maxWidth: 1120, margin: "0 auto", textAlign: "center", marginBottom: "clamp(32px, 5vw, 60px)" }}>
+        <div style={{ width: "100%", maxWidth: 1120, margin: "0 auto", textAlign: "center", marginBottom: "clamp(24px, 4vw, 60px)" }}>
           <h2 style={{
             fontFamily: "var(--font-cormorant, 'Cormorant Garamond', Georgia, serif)",
             fontSize: "clamp(36px, 6vw, 88px)",
@@ -400,6 +444,7 @@ export default function BriefCTASection() {
           onClick={openModal}
           onMouseEnter={() => isIdle && setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
+          className="brief-upload-card"
           style={{
             position: "relative",
             width: "100%", maxWidth: 1120,
@@ -417,10 +462,10 @@ export default function BriefCTASection() {
         >
           {/* Dashed SVG border */}
           <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0 }}>
-            <svg width="100%" height="100%" style={{ position: "absolute", inset: 0, overflow: "visible" }}>
+            <svg className="brief-dash-border" width="100%" height="100%" style={{ position: "absolute", inset: 0, overflow: "visible" }}>
               <rect
                 x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)"
-                rx="30" fill="none" strokeWidth="1.5" strokeDasharray="10 10"
+                rx="30" fill="none" strokeWidth="1.5" strokeDasharray={isMobile ? "6 8" : "10 10"}
                 stroke={strokeColor}
                 style={{ transition: "stroke 0.6s ease" }}
               />
@@ -430,17 +475,17 @@ export default function BriefCTASection() {
           {/* Folder animation — visible only in idle state.
               Container is tall enough (folder + max fan height ~80px) with folder
               anchored to the bottom, so fanned images stay within bounds. No overflow:hidden. */}
-          <div style={{
+          <div className="brief-folder-wrap" style={{
             position: "relative", zIndex: 20,
             display: "flex", justifyContent: "center", alignItems: "flex-end", width: "100%",
-            height: isIdle ? "clamp(140px, 14vw, 175px)" : 0,
-            marginBottom: isIdle ? "clamp(18px, 2.5vw, 28px)" : 0,
+            height: isIdle ? "clamp(120px, 14vw, 175px)" : 0,
+            marginBottom: isIdle ? "clamp(14px, 2vw, 24px)" : 0,
             opacity: isIdle ? 1 : 0,
             transform: isIdle ? "translateY(0)" : "translateY(20px)",
             pointerEvents: "none",
             transition: "opacity 0.45s ease, transform 0.45s ease, height 0.45s ease, margin-bottom 0.45s ease",
           }}>
-            <AnimatedFolder isHovered={isHovered} />
+            <AnimatedFolder isHovered={isHovered} scale={1} />
           </div>
 
           {/* Button area */}
@@ -554,7 +599,7 @@ export default function BriefCTASection() {
           </div>
 
           {/* Bottom helper text */}
-          <div style={{
+          <div className="brief-helper-text" style={{
             position: "absolute", bottom: "clamp(16px, 2.5vw, 26px)", left: "50%",
             transform: "translateX(-50%)", zIndex: 10,
             opacity: isIdle ? 1 : 0,

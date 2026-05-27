@@ -183,6 +183,27 @@ export default function MasonryGallerySection() {
 
   return (
     <>
+      <style>{`
+        .mgal-tabs {
+          display: flex;
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+        @media (max-width: 600px) {
+          .mgal-tabs {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            justify-content: flex-start;
+            padding: 4px clamp(16px, 4vw, 24px) 4px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            gap: 8px;
+          }
+          .mgal-tabs::-webkit-scrollbar { display: none; }
+          .mgal-tab { flex-shrink: 0; }
+        }
+      `}</style>
 
       <section
         ref={sectionRef}
@@ -251,11 +272,8 @@ export default function MasonryGallerySection() {
 
           {/* ── Tabs ────────────────────────────────────────── */}
           <div
+            className="mgal-tabs"
             style={{
-              display: "flex",
-              justifyContent: "center",
-              flexWrap: "wrap",
-              gap: 12,
               marginBottom: "clamp(32px, 4vw, 52px)",
             }}
           >
@@ -265,6 +283,7 @@ export default function MasonryGallerySection() {
                 <button
                   key={tab.folder}
                   type="button"
+                  className="mgal-tab"
                   onClick={() => { void handleTabChange(tab); }}
                   disabled={isSwitching}
                   style={{

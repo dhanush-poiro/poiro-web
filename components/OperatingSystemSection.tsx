@@ -81,11 +81,15 @@ export default function OperatingSystemSection() {
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Roboto:wght@300;400;500&display=swap');
         .os-section * { box-sizing: border-box; }
         @media (max-width: 860px) {
-          .os-row-grid { grid-template-columns: 1fr !important; gap: clamp(20px, 4vw, 32px) !important; }
-          .os-row-img { width: 100% !important; max-width: 480px !important; margin: 0 auto; }
+          .os-row-grid { grid-template-columns: 1fr !important; gap: clamp(16px, 3.5vw, 28px) !important; }
+          .os-row-img  { width: 100% !important; max-width: 480px !important; margin: 0 auto; order: 2 !important; }
+          .os-row-desc { order: 3 !important; }
+          .os-row-label { order: 1 !important; }
+          .os-row-item { padding-top: clamp(20px, 3vh, 36px) !important; padding-bottom: clamp(20px, 3vh, 36px) !important; }
         }
         @media (max-width: 600px) {
-          .os-row-grid { gap: 20px !important; }
+          .os-row-grid { gap: 16px !important; }
+          .os-row-desc p { font-size: 13px !important; }
         }
       `}</style>
 
@@ -106,8 +110,8 @@ export default function OperatingSystemSection() {
           style={{
             maxWidth: "min(1100px, 88vw)",
             margin: "0 auto",
-            padding: "0 24px",
-            marginBottom: "clamp(56px, 8vw, 110px)",
+            padding: "0 clamp(16px, 4vw, 24px)",
+            marginBottom: "clamp(40px, 7vw, 110px)",
           }}
         >
           {/* Label */}
@@ -165,7 +169,7 @@ export default function OperatingSystemSection() {
           style={{
             maxWidth: "min(1100px, 88vw)",
             margin: "0 auto",
-            padding: "0 24px",
+            padding: "0 clamp(16px, 4vw, 24px)",
           }}
         >
           {/* Top border */}
@@ -177,7 +181,7 @@ export default function OperatingSystemSection() {
               <div key={i}>
                 {/* Service row */}
                 <div
-                  className="os-row-grid"
+                  className="os-row-grid os-row-item"
                   onMouseEnter={() => setHovered(i)}
                   onMouseLeave={() => setHovered(null)}
                   style={{
@@ -192,7 +196,7 @@ export default function OperatingSystemSection() {
                   }}
                 >
                   {/* Left column: number + label */}
-                  <div>
+                  <div className="os-row-label">
                     <span
                       style={{
                         fontFamily: "'Roboto', sans-serif",
@@ -222,7 +226,7 @@ export default function OperatingSystemSection() {
                   </div>
 
                   {/* Center column: product name + description */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  <div className="os-row-desc" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                     <span
                       style={{
                         fontFamily: "'Cormorant Garamond', serif",

@@ -83,28 +83,182 @@ const CARDS: CardData[] = [
 ];
 
 // Arc-fan geometry: centre card highest, outer cards curve down
-const ARC_ROT     = [-22, -11, 0, 11, 22];           // rotation (degrees)
-const ARC_DY_PX   = [200, 65,  0, 65, 200];          // Y drop (outer cards lower = more arc)
-const ARC_FX_MULT = [0.35, 0.18, 0, -0.18, -0.35];  // partial X convergence (× cardW)
-const FAN_Z       = [1, 2, 3, 4, 5];                 // rightmost card on top
+const ARC_ROT     = [-22, -11, 0, 11, 22];
+const ARC_DY_PX   = [200, 65,  0, 65, 200];
+const ARC_FX_MULT = [0.35, 0.18, 0, -0.18, -0.35];
+const FAN_Z       = [1, 2, 3, 4, 5];
 
-const R = 18; // corner radius (px)
+const R = 18;
 
 const TRIGGER_ON  = 0.78;
 const TRIGGER_OFF = 0.72;
+
+// ── Mobile card component ─────────────────────────────────────────────────────
+function MobileCardGallery() {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardW = el.offsetWidth * 0.76 + 12; // 76vw + gap
+    const idx = Math.round(el.scrollLeft / cardW);
+    setActiveIdx(Math.max(0, Math.min(CARDS.length - 1, idx)));
+  };
+
+  return (
+    <section
+      className="scs"
+      style={{
+        backgroundColor: "#070707",
+        backgroundImage: "radial-gradient(rgba(255,255,255,0.10) 2px, transparent 2px)",
+        backgroundSize: "48px 48px",
+        backgroundPosition: "center top",
+        position: "relative",
+        zIndex: 10,
+        padding: "clamp(52px, 8vh, 72px) 0 clamp(44px, 7vh, 60px)",
+        fontFamily: "'Inter', sans-serif",
+      }}
+    >
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Inter:wght@300;400;500&display=swap');
+        .scs * { box-sizing: border-box; }
+        .scs-scroll::-webkit-scrollbar { display: none; }
+      `}</style>
+
+      {/* Heading */}
+      <h2
+        style={{
+          fontFamily: "'Cormorant Garamond', serif",
+          fontSize: "clamp(22px, 6vw, 32px)",
+          color: "rgba(240,234,222,1)",
+          fontWeight: 400,
+          letterSpacing: "-0.2px",
+          textAlign: "center",
+          marginBottom: "clamp(28px, 5vh, 40px)",
+          lineHeight: 1.15,
+          padding: "0 24px",
+        }}
+      >
+        One platform <em>for</em> every creative need
+      </h2>
+
+      {/* Horizontal snap scroll */}
+      <div
+        ref={scrollRef}
+        className="scs-scroll"
+        onScroll={handleScroll}
+        style={{
+          display: "flex",
+          overflowX: "auto",
+          gap: 12,
+          padding: "8px 12vw 8px",
+          scrollSnapType: "x mandatory",
+          WebkitOverflowScrolling: "touch",
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        } as React.CSSProperties}
+      >
+        {CARDS.map((card, i) => (
+          <div
+            key={i}
+            style={{
+              flexShrink: 0,
+              width: "76vw",
+              maxWidth: 300,
+              aspectRatio: "3 / 4",
+              borderRadius: 20,
+              background: card.back,
+              border: card.border ?? "none",
+              padding: "clamp(20px, 5vw, 28px)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              scrollSnapAlign: "center",
+              boxShadow: "0 20px 56px rgba(0,0,0,0.65)",
+              transition: "transform 0.3s ease",
+              transform: activeIdx === i ? "scale(1)" : "scale(0.96)",
+            }}
+          >
+            {/* Icon */}
+            <div
+              style={{ opacity: 0.75 }}
+              dangerouslySetInnerHTML={{ __html: card.iconSvg }}
+            />
+
+            {/* Text */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div
+                style={{
+                  fontSize: "clamp(18px, 5vw, 22px)",
+                  fontWeight: 500,
+                  lineHeight: 1.2,
+                  letterSpacing: "-0.2px",
+                  whiteSpace: "pre-line",
+                  color: card.textColor,
+                }}
+              >
+                {card.title}
+              </div>
+              <div
+                style={{
+                  fontSize: "clamp(12px, 3.2vw, 14px)",
+                  lineHeight: 1.6,
+                  fontWeight: 300,
+                  color: card.subColor,
+                }}
+              >
+                {card.sub}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Dot indicators */}
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        gap: 6,
+        marginTop: 20,
+      }}>
+        {CARDS.map((_, i) => (
+          <div
+            key={i}
+            style={{
+              height: 5,
+              borderRadius: 99,
+              background: i === activeIdx ? "#ff8015" : "rgba(255,255,255,0.18)",
+              width: i === activeIdx ? 20 : 5,
+              transition: "width 0.3s ease, background 0.3s ease",
+            }}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
 
 // =============================================================================
 export default function ScrollCardSplitSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef   = useRef<HTMLDivElement>(null);
   const [prog, setProg]               = useState(0);
-  const [cardW, setCardW]             = useState(0); // one card width in px
+  const [cardW, setCardW]             = useState(0);
   const [fanned, setFanned]           = useState(false);
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [overlayReady, setOverlayReady] = useState(true);
+  const [isMobile, setIsMobile]       = useState(false);
   const fannedRef                     = useRef(false);
   const lockTimerRef                  = useRef<ReturnType<typeof setTimeout> | null>(null);
   const overlayTimerRef               = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check, { passive: true });
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   // Measure one card's width whenever the stage resizes
   useEffect(() => {
@@ -157,9 +311,6 @@ export default function ScrollCardSplitSection() {
     window.dispatchEvent(new Event("scroll-unlock"));
   }, []);
 
-  // When cards fan out, hide the overlay immediately so the flip is visible.
-  // When cards un-fan (fanned → false), delay the overlay until the flip-back
-  // animation finishes (~1 s: 0.28 s delay + 0.72 s flip), then fade it in.
   useEffect(() => {
     if (overlayTimerRef.current) clearTimeout(overlayTimerRef.current);
     if (fanned) {
@@ -172,14 +323,19 @@ export default function ScrollCardSplitSection() {
     };
   }, [fanned]);
 
-  // ── scroll-driven values ──────────────────────────────────────────────────
+  // ── Mobile render ─────────────────────────────────────────────────────────
+  if (isMobile) {
+    return <MobileCardGallery />;
+  }
+
+  // ── Desktop scroll-driven values ──────────────────────────────────────────
   const p1 = phase(prog, 0.0,  0.40);
   const p2 = phase(prog, 0.40, 0.75);
 
   const stageScale   = lerp(1.0, 0.96, p1);
-  const innerR       = lerp(0, R, p2);          // inner card corners sharpen as they split
+  const innerR       = lerp(0, R, p2);
   const headingP     = phase(prog, 0.08, 0.28);
-  const splitPx      = cardW * 0.06 * p2;       // outward push during split phase
+  const splitPx      = cardW * 0.06 * p2;
   const frontOpacity = p2 < 0.01 ? 1 : Math.max(0, 1 - p2 * 4);
 
   return (
@@ -257,11 +413,6 @@ export default function ScrollCardSplitSection() {
               overflow: "visible",
             }}
           >
-            {/*
-              Stage — same proportions as the original 3-card layout but for 5 cards.
-              Original: aspectRatio 6/3 (= 2:1), three 2:3 cards.
-              Here: aspectRatio 10/3, five 2:3 cards side-by-side.
-            */}
             <div
               ref={stageRef}
               style={{
@@ -271,10 +422,7 @@ export default function ScrollCardSplitSection() {
                 overflow: "visible",
               }}
             >
-              {/* ── Single front overlay ────────────────────────
-                Always in DOM so CSS transition has a "from" value.
-                overlayReady=false while flip-back is playing (prevents
-                the overlay snapping in on fast upward scroll).             ── */}
+              {/* Single front overlay */}
               <div
                 style={{
                   position: "absolute",
@@ -288,31 +436,16 @@ export default function ScrollCardSplitSection() {
                 }}
               />
 
-              {/* ── Five cards ─────────────────────────────── */}
+              {/* Five cards */}
               {CARDS.map((card, i) => {
-                /*
-                  Split phase: small outward push from centre (scroll-driven).
-                  Fan phase: each card's bottom-centre translates to stage centre,
-                  then the card rotates around that shared pivot.
-
-                  CSS transform order (right-to-left execution):
-                    translateX(fx)   ← 1st: slide bottom-centre to stage centre
-                    rotateZ(fr)      ← 2nd: rotate around the card's own bottom-centre
-                    translateY(hY)   ← 3rd (hover): lift the card along its rotated axis
-                */
-
-                // Scroll-split: push cards apart symmetrically from centre (not active when fanned)
                 const sx = fanned ? 0 : (i - 2) * splitPx;
-
                 const fr    = fanned ? ARC_ROT[i]            : 0;
                 const arcDy = fanned ? ARC_DY_PX[i]          : 0;
                 const fx    = fanned ? ARC_FX_MULT[i] * cardW : 0;
 
-                // Hover: lift the hovered card upward along its own axis
                 const isHovered = fanned && hoveredCard === i;
                 const hY = isHovered ? -32 : 0;
 
-                // Front-face border radius (inner edges round as cards separate)
                 const radiusFront =
                   i === 0
                     ? `${R}px ${innerR}px ${innerR}px ${R}px`
@@ -326,7 +459,6 @@ export default function ScrollCardSplitSection() {
                     onMouseEnter={() => fanned && setHoveredCard(i)}
                     onMouseLeave={() => fanned && setHoveredCard(null)}
                     style={{
-                      // Side-by-side positioning (wide rectangle)
                       position: "absolute",
                       left: `${(i / 5) * 100}%`,
                       top: 0,
@@ -334,17 +466,10 @@ export default function ScrollCardSplitSection() {
                       height: "100%",
                       zIndex: fanned ? FAN_Z[i] : 0,
                       perspective: "1200px",
-                      // Scroll-split push (zeroed when fanned so fan translate is exact)
                       transform: `translateX(${sx}px)`,
                       cursor: fanned ? "pointer" : "default",
                     }}
                   >
-                    {/*
-                      Fan + hover wrapper.
-                      transformOrigin "50% 100%" = pivot at card's own bottom-centre.
-                      Combined with the translateX, all bottom-centres converge to
-                      one point and cards radiate outward like a hand fan.
-                    */}
                     <div
                       style={{
                         width: "100%",
@@ -368,7 +493,7 @@ export default function ScrollCardSplitSection() {
                           willChange: "transform",
                         }}
                       >
-                        {/* Front face — grass texture, cover-sized (no stretch) */}
+                        {/* Front face */}
                         <div
                           style={{
                             position: "absolute",
@@ -381,7 +506,7 @@ export default function ScrollCardSplitSection() {
                           }}
                         />
 
-                        {/* Back face — card content */}
+                        {/* Back face */}
                         <div
                           style={{
                             position: "absolute",

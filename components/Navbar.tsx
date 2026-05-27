@@ -24,7 +24,7 @@ export default function Navbar() {
     justifyContent:  'space-between',
     padding:         '10px 20px',
     borderRadius:    12,
-    width:           shrunk ? 'min(58vw, 820px)' : 'min(88vw, 1320px)',
+    width:           shrunk ? 'min(62vw, 820px)' : 'min(90vw, 1260px)',
     transition:      'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
     whiteSpace:      'nowrap',
     /* ── Frosted glass — opaque enough to not read through, transparent enough to blur ── */

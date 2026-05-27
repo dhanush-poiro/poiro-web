@@ -80,6 +80,13 @@ export default function OperatingSystemSection() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Roboto:wght@300;400;500&display=swap');
         .os-section * { box-sizing: border-box; }
+        @media (max-width: 860px) {
+          .os-row-grid { grid-template-columns: 1fr !important; gap: clamp(20px, 4vw, 32px) !important; }
+          .os-row-img { width: 100% !important; max-width: 480px !important; margin: 0 auto; }
+        }
+        @media (max-width: 600px) {
+          .os-row-grid { gap: 20px !important; }
+        }
       `}</style>
 
       <section
@@ -87,7 +94,7 @@ export default function OperatingSystemSection() {
         className="os-section"
         style={{
           backgroundColor: "#000000",
-          padding: "clamp(80px, 12vh, 140px) 0",
+          padding: "clamp(80px, 10vw, 140px) 0",
           fontFamily: "'Roboto', sans-serif",
           position: "relative",
           zIndex: 10,
@@ -100,7 +107,7 @@ export default function OperatingSystemSection() {
             maxWidth: "min(1100px, 88vw)",
             margin: "0 auto",
             padding: "0 24px",
-            marginBottom: "clamp(64px, 10vh, 120px)",
+            marginBottom: "clamp(56px, 8vw, 110px)",
           }}
         >
           {/* Label */}
@@ -170,6 +177,7 @@ export default function OperatingSystemSection() {
               <div key={i}>
                 {/* Service row */}
                 <div
+                  className="os-row-grid"
                   onMouseEnter={() => setHovered(i)}
                   onMouseLeave={() => setHovered(null)}
                   style={{
@@ -177,8 +185,8 @@ export default function OperatingSystemSection() {
                     gridTemplateColumns: "1fr 1fr 1fr",
                     gap: "clamp(24px, 3vw, 48px)",
                     alignItems: "center",
-                    padding: "clamp(40px, 5.5vh, 72px) 0",
-                    transform: isHovered ? "scale(1.02)" : "scale(1)",
+                    padding: "clamp(36px, 5vh, 68px) 0",
+                    transform: isHovered ? "scale(1.015)" : "scale(1)",
                     transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
                     cursor: "default",
                   }}
@@ -244,6 +252,7 @@ export default function OperatingSystemSection() {
 
                   {/* Right column: service image or video */}
                   <div
+                    className="os-row-img"
                     style={{
                       width: "100%",
                       aspectRatio: "4 / 3",
@@ -295,7 +304,7 @@ export default function OperatingSystemSection() {
             flexDirection: "column",
             alignItems: "center",
             gap: 16,
-            marginTop: "clamp(48px, 8vh, 96px)",
+            marginTop: "clamp(48px, 7vw, 96px)",
           }}
         >
           <a

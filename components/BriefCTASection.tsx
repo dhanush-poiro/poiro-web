@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Aurora from "@/components/Aurora";
 
 type UploadState = "idle" | "uploading" | "success" | "error";
 type BriefFormData = { name: string; email: string; company: string; brief: string };
@@ -226,7 +227,7 @@ export default function BriefCTASection() {
       style={{
         position: "relative", width: "100%", background: "#020202",
         color: "#fff", overflow: "hidden", zIndex: 10,
-        padding: "clamp(110px, 13vw, 190px) clamp(16px, 3vw, 48px)",
+        padding: "clamp(100px, 10vw, 180px) clamp(16px, 3vw, 48px)",
         display: "flex", justifyContent: "center",
       }}
     >
@@ -354,14 +355,13 @@ export default function BriefCTASection() {
         .brief-file-remove:hover { color: rgb(248,113,113); }
       `}</style>
 
-      {/* Ambient glow — replaces ColorBends */}
-      <div style={{
-        position: "absolute", top: "30%", left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: 900, height: 560,
-        background: "radial-gradient(ellipse at center, rgba(255,128,21,0.14) 0%, transparent 70%)",
-        pointerEvents: "none", zIndex: 0,
-      }} />
+      {/* Aurora WebGL glow */}
+      <Aurora
+        colorStops={["#F97316", "#F97316", "#EF4444"]}
+        amplitude={1.1}
+        blend={0.52}
+        speed={0.5}
+      />
 
       {/* ── Content ── */}
       <div style={{
@@ -405,7 +405,7 @@ export default function BriefCTASection() {
             width: "100%", maxWidth: 1120,
             borderRadius: 32,
             display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-            padding: "clamp(48px, 10vh, 84px) clamp(20px, 4vw, 40px)",
+            padding: "clamp(44px, 7vw, 80px) clamp(20px, 4vw, 40px)",
             minHeight: "clamp(240px, 30vw, 380px)",
             cursor: isIdle ? "pointer" : isUploading ? "wait" : "default",
             transition: "background 0.6s ease, box-shadow 0.6s ease",
@@ -433,8 +433,8 @@ export default function BriefCTASection() {
           <div style={{
             position: "relative", zIndex: 20,
             display: "flex", justifyContent: "center", alignItems: "flex-end", width: "100%",
-            height: isIdle ? "clamp(148px, 17vh, 175px)" : 0,
-            marginBottom: isIdle ? "clamp(20px, 3.5vh, 28px)" : 0,
+            height: isIdle ? "clamp(140px, 14vw, 175px)" : 0,
+            marginBottom: isIdle ? "clamp(18px, 2.5vw, 28px)" : 0,
             opacity: isIdle ? 1 : 0,
             transform: isIdle ? "translateY(0)" : "translateY(20px)",
             pointerEvents: "none",
@@ -478,7 +478,7 @@ export default function BriefCTASection() {
               style={{
                 position: "relative",
                 minWidth: "clamp(220px, 24vw, 340px)",
-                minHeight: "clamp(48px, 5.5vh, 58px)",
+                minHeight: "clamp(48px, 4.5vw, 58px)",
                 padding: "0 clamp(32px, 5vw, 56px)",
                 borderRadius: 9999,
                 fontFamily: "var(--font-family)",
@@ -555,7 +555,7 @@ export default function BriefCTASection() {
 
           {/* Bottom helper text */}
           <div style={{
-            position: "absolute", bottom: "clamp(18px, 3vh, 28px)", left: "50%",
+            position: "absolute", bottom: "clamp(16px, 2.5vw, 26px)", left: "50%",
             transform: "translateX(-50%)", zIndex: 10,
             opacity: isIdle ? 1 : 0,
             transition: "opacity 0.45s ease",

@@ -101,8 +101,10 @@ export default function ScrollCardSplitSection() {
   const [cardW, setCardW]             = useState(0); // one card width in px
   const [fanned, setFanned]           = useState(false);
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [overlayReady, setOverlayReady] = useState(true);
   const fannedRef                     = useRef(false);
   const lockTimerRef                  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const overlayTimerRef               = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Measure one card's width whenever the stage resizes
   useEffect(() => {
@@ -155,6 +157,21 @@ export default function ScrollCardSplitSection() {
     window.dispatchEvent(new Event("scroll-unlock"));
   }, []);
 
+  // When cards fan out, hide the overlay immediately so the flip is visible.
+  // When cards un-fan (fanned → false), delay the overlay until the flip-back
+  // animation finishes (~1 s: 0.28 s delay + 0.72 s flip), then fade it in.
+  useEffect(() => {
+    if (overlayTimerRef.current) clearTimeout(overlayTimerRef.current);
+    if (fanned) {
+      setOverlayReady(false);
+    } else {
+      overlayTimerRef.current = setTimeout(() => setOverlayReady(true), 1000);
+    }
+    return () => {
+      if (overlayTimerRef.current) clearTimeout(overlayTimerRef.current);
+    };
+  }, [fanned]);
+
   // ── scroll-driven values ──────────────────────────────────────────────────
   const p1 = phase(prog, 0.0,  0.40);
   const p2 = phase(prog, 0.40, 0.75);
@@ -195,14 +212,14 @@ export default function ScrollCardSplitSection() {
           style={{
             position: "sticky",
             top: 0,
-            height: "100vh",
+            height: "100dvh",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
             overflow: "visible",
-            paddingTop: "72px",
-            paddingBottom: "20px",
+            paddingTop: "clamp(52px, 6dvh, 64px)",
+            paddingBottom: "clamp(40px, 6dvh, 64px)",
           }}
         >
           {/* ── Heading ──────────────────────────────────────── */}
@@ -254,21 +271,22 @@ export default function ScrollCardSplitSection() {
                 overflow: "visible",
               }}
             >
-              {/* ── Single front overlay (fades during p2) ── */}
-              {frontOpacity > 0 && (
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    background:
-                      "url('/assets/grass.png') center / cover no-repeat",
-                    borderRadius: R,
-                    zIndex: 10,
-                    opacity: frontOpacity,
-                    pointerEvents: "none",
-                  }}
-                />
-              )}
+              {/* ── Single front overlay ────────────────────────
+                Always in DOM so CSS transition has a "from" value.
+                overlayReady=false while flip-back is playing (prevents
+                the overlay snapping in on fast upward scroll).             ── */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "url('/assets/grass.png') center / cover no-repeat",
+                  borderRadius: R,
+                  zIndex: 10,
+                  opacity: overlayReady ? frontOpacity : 0,
+                  transition: "opacity 0.35s cubic-bezier(0.16,1,0.3,1)",
+                  pointerEvents: "none",
+                }}
+              />
 
               {/* ── Five cards ─────────────────────────────── */}
               {CARDS.map((card, i) => {

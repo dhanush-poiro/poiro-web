@@ -151,17 +151,90 @@
     margin-top: -16px;
   }
 
+  /* On mobile: stack text + logo band vertically as flex children, centered as a group */
   .sticky {
     border-radius: 16px 16px 0 0;
+    justify-content: center;
+    gap: 36px;
+    /* shift the center of gravity upward so text lands in upper 40% */
+    padding-bottom: 12vh;
+  }
+
+  .textWrap {
+    font-size: clamp(22px, 6.5vw, 34px);
+    max-width: 90vw;
+    margin-top: 0; /* let flex + gap handle spacing */
+    line-height: 1.2;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* logoBand becomes a flex child (not absolute) on mobile */
+  .logoBand {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    width: 88vw;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Show badge on mobile as a single-line label above the logos */
+  .badge {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* Hide decorative bracket SVGs on mobile */
+  .bracketSvg {
+    display: none;
+  }
+
+  /* "POWERING BRANDS" on one line */
+  .badgeText {
+    flex-direction: row;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .badgeCount {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.38);
+  }
+
+  .badgeLabel {
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.38);
+  }
+
+  .logoScroll {
+    padding: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .textWrap {
+    font-size: clamp(18px, 5.8vw, 24px);
+    max-width: 92vw;
+    line-height: 1.22;
   }
 
   .logoBand {
-    width: 90vw;
-    bottom: 56px;
-    gap: 24px;
+    width: 92vw;
+    gap: 8px;
   }
 
-  .badge {
-    display: none;
+  .sticky {
+    padding-bottom: 10vh;
+    gap: 28px;
   }
 }

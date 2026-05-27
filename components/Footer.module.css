@@ -168,22 +168,48 @@
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .footer {
-    padding: 20px 5% 0px;
+    padding: 20px 4% 24px;
   }
 
+  /* Remove aspect-ratio on mobile — give it real height for breathing room */
   .imageContainer {
-    aspect-ratio: 3 / 2;
-    border-radius: 12px;
+    aspect-ratio: unset;
+    min-height: clamp(520px, 74vh, 680px);
+    border-radius: 16px;
+  }
+
+  .content {
+    padding-bottom: 110px; /* clear space for bottom bar */
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .heading {
+    font-size: clamp(2rem, 7vw, 3.2rem);
+    margin-bottom: 28px;
+  }
+
+  .ctaButton {
+    padding: 14px 36px;
+    font-size: 0.9rem;
   }
 
   .divider {
     left: 20px;
     right: 20px;
-    bottom: 68px;
+    bottom: 76px;
   }
 
+  /* Stack copyright + links vertically on mobile */
   .bottomBar {
-    padding: 16px 20px 24px;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 20px 28px;
+  }
+
+  .links {
+    gap: 20px;
   }
 
   .email {
@@ -193,20 +219,26 @@
 
 @media (max-width: 480px) {
   .imageContainer {
-    aspect-ratio: 4 / 3;
+    min-height: clamp(480px, 76vh, 620px);
+    border-radius: 14px;
+  }
+
+  .heading {
+    font-size: clamp(1.8rem, 7.5vw, 2.8rem);
   }
 
   .divider {
     left: 14px;
     right: 14px;
-    bottom: 60px;
+    bottom: 82px;
   }
 
   .bottomBar {
-    padding: 14px 14px 20px;
+    padding: 16px 14px 28px;
+    gap: 10px;
   }
 
   .links {
-    gap: 14px;
+    gap: 16px;
   }
 }

@@ -100,9 +100,15 @@ export default function LayerByLayer() {
       const vw = window.innerWidth;
       let w: number, dx: number, dy: number;
       if (vw < 500) {
-        w = Math.max(300, vw - 32); dx = 12; dy = 28;
+        dx = 8; dy = 24;
+        // Container: min(1200, 92vw) wide, padding: max(16, 3vw)*2 each side
+        const avail = Math.round(Math.min(1200, vw * 0.92) - Math.max(16, vw * 0.03) * 2);
+        // Card width must leave room for (N-1) horizontal stagger offsets
+        w = Math.max(240, avail - dx * 3);
       } else if (vw < 768) {
-        w = Math.min(520, vw - 40); dx = 14; dy = 32;
+        dx = 12; dy = 32;
+        const avail = Math.round(Math.min(1200, vw * 0.92) - Math.max(16, vw * 0.03) * 2);
+        w = Math.max(280, Math.min(520, avail - dx * 3));
       } else if (vw < 1024) {
         w = 520; dx = 16; dy = 36;
       } else {
@@ -171,6 +177,13 @@ export default function LayerByLayer() {
         @media (max-width: 860px) {
           .lbl-split { grid-template-columns: 1fr !important; }
           .lbl-cards { order: -1; }
+          .lbl-text-col { min-height: auto !important; padding-bottom: clamp(36px, 5vw, 52px) !important; }
+          .lbl-card-body { display: none !important; }
+          .lbl-controls { padding-top: 28px; }
+        }
+        @media (max-width: 600px) {
+          .lbl-text-col { padding-bottom: 32px !important; }
+          .lbl-controls { padding-top: 20px; }
         }
       `}</style>
 
@@ -189,7 +202,7 @@ export default function LayerByLayer() {
           <div style={{
             maxWidth: "min(1200px, 92vw)",
             margin: "0 auto",
-            padding: "clamp(80px, 10vw, 130px) clamp(16px, 3vw, 48px) 0",
+            padding: "clamp(60px, 10vw, 130px) clamp(16px, 3vw, 48px) 0",
           }}>
 
             {/* ── Section header ─────────────────────────────────── */}
@@ -236,7 +249,7 @@ export default function LayerByLayer() {
               }}
             >
               {/* Left: animated text + controls */}
-              <div style={{
+              <div className="lbl-text-col" style={{
                 display: "flex", flexDirection: "column",
                 minHeight: stackPad + cardH,
                 paddingBottom: "clamp(40px, 5vw, 60px)",
@@ -273,7 +286,7 @@ export default function LayerByLayer() {
                   </div>
                 </div>
 
-                <div>
+                <div className="lbl-controls">
                   <div style={{ display: "flex", gap: 5, marginBottom: 18, alignItems: "center" }}>
                     {PROBLEMS.map((_, i) => (
                       <div key={i} className={`lbl-dot${i === activeIdx ? " on" : ""}`}
@@ -339,7 +352,7 @@ export default function LayerByLayer() {
                         }}>
                           {p.title}
                         </h3>
-                        <p style={{
+                        <p className="lbl-card-body" style={{
                           fontFamily: "var(--font-family)",
                           fontSize: "clamp(11px, 0.82vw, 12.5px)",
                           color: "rgba(255,255,255,0.48)", lineHeight: 1.68, margin: 0,

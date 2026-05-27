@@ -179,12 +179,34 @@
 }
 
 @media (max-width: 768px) {
-  .hero { padding: 6px 6px 0; }
+  .hero {
+    --hand-width: 58%;
+    --hero-heading-size: clamp(28px, 7.5vw, 44px);
+    --hero-gap: 20px;
+    --hero-btn-padding-h: 38px;
+    padding: 8px 8px 0;
+  }
 
-  .leftHand  { left:  -5%; }
-  .rightHand { right: -5%; }
+  .leftHand  { left:  -7%; }
+  .rightHand { right: -7%; }
 
-  .handImage { max-height: 60%; }
+  .handImage { max-height: 68%; }
+
+  .scrollIndicator { bottom: var(--space-4); }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    --hand-width: 70%;
+    --hero-heading-size: clamp(24px, 8.5vw, 36px);
+    --hero-gap: 14px;
+    --hero-btn-padding-h: 28px;
+    --hero-btn-padding-v: 11px;
+    --hero-btn-font-size: 14px;
+  }
+
+  .leftHand  { left:  -12%; }
+  .rightHand { right: -12%; }
 }
 
 @media (prefers-reduced-motion: reduce) {

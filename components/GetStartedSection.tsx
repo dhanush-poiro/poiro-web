@@ -85,7 +85,11 @@ export default function GetStartedSection() {
           .gs-step-cell:not(:last-child) { border-right: none !important; border-bottom: 1px solid ${border} !important; }
           .gs-step-arrow { display: none !important; }
           .gs-opts-row { grid-template-columns: 1fr !important; }
-          .gs-cta-inner { flex-direction: column !important; text-align: center !important; }
+          .gs-cta-inner { flex-direction: column !important; text-align: center !important; align-items: center !important; }
+          .gs-cta-link { width: 100% !important; justify-content: center !important; }
+        }
+        @media (max-width: 480px) {
+          .gs-step-cell { padding: 20px 16px !important; }
         }
       `}</style>
 
@@ -103,7 +107,7 @@ export default function GetStartedSection() {
         <div style={{
           maxWidth: "min(1100px, 90vw)",
           margin: "0 auto",
-          padding: "0 24px",
+          padding: "0 clamp(16px, 4vw, 24px)",
         }}>
 
           {/* Eyebrow */}

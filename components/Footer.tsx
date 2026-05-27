@@ -25,8 +25,9 @@ export default function Footer() {
     const bottomBar = bottomBarRef.current;
     if (!footer || !imageWrap || !content || !divider || !bottomBar) return;
 
-    if (prefersReducedMotion) {
-      gsap.set([...Array.from(content.children), divider, ...Array.from(bottomBar.children)], { opacity: 1, y: 0 });
+    const isMobile = window.innerWidth <= 768;
+    if (prefersReducedMotion || isMobile) {
+      gsap.set([...Array.from(content.children), divider, ...Array.from(bottomBar.children)], { opacity: 1, y: 0, filter: 'blur(0px)', scaleX: 1 });
       return;
     }
 

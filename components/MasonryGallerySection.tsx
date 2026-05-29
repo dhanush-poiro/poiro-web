@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Masonry, { type MasonryItem } from "@/components/Masonry";
+import { getMediaForFolder } from "@/lib/media-manifest";
 
 type TabConfig = { label: string; folder: string };
 
@@ -11,8 +12,6 @@ const TABS: TabConfig[] = [
   { label: "UGC / Affiliate",folder: "ugc-affiliate" },
   { label: "TVC / Animatics",folder: "tvc-animatics" },
 ];
-
-type MasonryApiResponse = { media?: Array<{ src: string; type: "image" | "video" }> };
 
 // Deterministic per-item aspect jitter so the grid never looks uniform
 function hashToUnit(seed: string): number {
@@ -57,25 +56,14 @@ async function precomputeMedia(items: MasonryItem[]): Promise<MasonryItem[]> {
   );
 }
 
-async function loadCategoryItems(folder: string): Promise<MasonryItem[]> {
-  try {
-    const res = await fetch(
-      `/api/masonry?folder=${encodeURIComponent(folder)}`,
-      { cache: "no-store" }
-    );
-    if (!res.ok) return [];
-    const data = (await res.json()) as MasonryApiResponse;
-    const media = Array.isArray(data.media) ? data.media : [];
-    return media.map((item, i) => ({
-      id: `${folder}-${i + 1}`,
-      src: item.src,
-      type: item.type,
-      url: "https://showcase.poiroscope.com",
-      aspectRatio: 1,
-    }));
-  } catch {
-    return [];
-  }
+function loadCategoryItems(folder: string): MasonryItem[] {
+  return getMediaForFolder(folder).map((item, i) => ({
+    id: `${folder}-${i + 1}`,
+    src: item.src,
+    type: item.type,
+    url: "https://showcase.poiroscope.com",
+    aspectRatio: 1,
+  }));
 }
 
 export default function MasonryGallerySection() {
@@ -96,8 +84,8 @@ export default function MasonryGallerySection() {
     let cancelled = false;
 
     const bootstrap = async () => {
-      const loaded     = await loadCategoryItems(activeTab.folder);
-      const computed   = await precomputeMedia(loaded);
+      const loaded   = loadCategoryItems(activeTab.folder);
+      const computed = await precomputeMedia(loaded);
       if (cancelled) return;
 
       setItemsByFolder({ [activeTab.folder]: computed });
@@ -106,8 +94,7 @@ export default function MasonryGallerySection() {
       const warmRest = async () => {
         for (const tab of TABS) {
           if (cancelled || tab.folder === activeTab.folder) continue;
-          const l = await loadCategoryItems(tab.folder);
-          const c = await precomputeMedia(l);
+          const c = await precomputeMedia(loadCategoryItems(tab.folder));
           if (cancelled) return;
           setItemsByFolder((prev) => ({ ...prev, [tab.folder]: c }));
         }
@@ -155,8 +142,7 @@ export default function MasonryGallerySection() {
       return;
     }
 
-    const loaded   = await loadCategoryItems(tab.folder);
-    const computed = await precomputeMedia(loaded);
+    const computed = await precomputeMedia(loadCategoryItems(tab.folder));
     setItemsByFolder((prev) => ({ ...prev, [tab.folder]: computed }));
     setItems(computed);
     setActiveTab(tab);

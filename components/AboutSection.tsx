@@ -45,6 +45,8 @@ const IMAGE_LOGOS = [
   '/logos/foramour.webp',
   '/logos/greenfields.webp',
   '/logos/stella.webp',
+  '/logos/Comfort.png',
+  '/logos/Proclin.png',
 ];
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;

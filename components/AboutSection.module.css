@@ -158,7 +158,7 @@
   .sticky {
     border-radius: 16px 16px 0 0;
     justify-content: center;
-    gap: clamp(52px, 8vh, 80px);
+    gap: clamp(72px, 11vh, 100px);
     padding-bottom: 6vh;
   }
 

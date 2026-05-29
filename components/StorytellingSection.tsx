@@ -115,7 +115,7 @@ export default function StorytellingSection() {
               fontWeight: 600,
             }}
           >
-            The Difference
+            The Problem
           </span>
         </div>
 
@@ -134,8 +134,8 @@ export default function StorytellingSection() {
             opacity: 0,
           }}
         >
-          Prompting is not{" "}
-          <em style={{ fontStyle: "italic" }}>Storytelling.</em>
+          AI brand video is here.{" "}
+          <em style={{ fontStyle: "italic" }}>The process for it isn&apos;t.</em>
         </h2>
 
         {/* Description */}

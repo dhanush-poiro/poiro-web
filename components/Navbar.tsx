@@ -6,7 +6,7 @@ import Image from 'next/image';
 const NAV_LINKS = [
   { href: '#os-section', label: 'Poiroscope OS' },
   { href: '#gallery',    label: 'Featured Work' },
-  { href: '#send-idea',  label: 'Upload Brief' },
+  { href: '/upload',     label: 'Upload Brief' },
 ];
 
 const CALENDLY = 'https://calendly.com/sameer-poiro/poiro-introduction-with-founders';
@@ -138,11 +138,16 @@ export default function Navbar() {
           </ul>
         )}
 
-        {/* Desktop: CTA button */}
+        {/* Desktop: CTA buttons */}
         {!isMobile && (
-          <a href={CALENDLY} target="_blank" rel="noopener noreferrer" style={cta} id="nav-cta">
-            Get in Touch
-          </a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+            <a href="/get-access" style={{ ...cta, background: 'transparent', color: 'rgba(255,255,255,0.85)', border: '1px solid rgba(255,255,255,0.22)' }}>
+              Get Access
+            </a>
+            <a href={CALENDLY} target="_blank" rel="noopener noreferrer" style={cta} id="nav-cta">
+              Get in Touch
+            </a>
+          </div>
         )}
 
         {/* Mobile: hamburger → X */}
@@ -215,28 +220,47 @@ export default function Navbar() {
             ))}
           </nav>
 
-          {/* Mobile CTA */}
-          <a
-            href={CALENDLY}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={closeMenu}
-            style={{
-              marginTop:      44,
-              display:        'inline-flex',
-              alignItems:     'center',
-              padding:        '14px 44px',
-              borderRadius:   10,
-              background:     '#ececec',
-              color:          '#0c0c0c',
-              fontSize:       15,
-              fontWeight:     600,
-              letterSpacing:  '0.01em',
-              textDecoration: 'none',
-            }}
-          >
-            Get in Touch
-          </a>
+          {/* Mobile CTAs */}
+          <div style={{ marginTop: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <a
+              href="/get-access"
+              onClick={closeMenu}
+              style={{
+                display:        'inline-flex',
+                alignItems:     'center',
+                padding:        '14px 44px',
+                borderRadius:   10,
+                background:     'linear-gradient(135deg, #ff8015, #ff4500)',
+                color:          '#fff',
+                fontSize:       15,
+                fontWeight:     600,
+                letterSpacing:  '0.01em',
+                textDecoration: 'none',
+              }}
+            >
+              Get Access
+            </a>
+            <a
+              href={CALENDLY}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeMenu}
+              style={{
+                display:        'inline-flex',
+                alignItems:     'center',
+                padding:        '14px 44px',
+                borderRadius:   10,
+                background:     '#ececec',
+                color:          '#0c0c0c',
+                fontSize:       15,
+                fontWeight:     600,
+                letterSpacing:  '0.01em',
+                textDecoration: 'none',
+              }}
+            >
+              Get in Touch
+            </a>
+          </div>
 
           {/* Small copyright at bottom */}
           <p style={{

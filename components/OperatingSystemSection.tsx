@@ -21,7 +21,7 @@ const SERVICES: Service[] = [
     title: "Ideation Agent",
     desc: "Tap into a living universe of trends and audience signals to create content your consumers can't scroll past. Tracking the best brands and creators in your category, our Ideation Agent parses thousands of hours of content to surface the most compelling ideas, storylines, visual concepts and hooks, so inspiration is never more than a search away. Stay ahead of the curve, always.",
     img: "/os/brand-cosmos.webp",
-    video: "/os/Brand-Cosmos.mp4",
+    video: "/os/brand_cosmos.mp4",
     imgAlt: "Ideation Agent",
   },
   {
@@ -30,6 +30,7 @@ const SERVICES: Service[] = [
     title: "Briefing, Asset & Project Management",
     desc: "Where great ideas become brilliant briefs, and creative teams finally work as one. Ideate with an intelligent briefing agent, curate references from across the web, generate samples and manage feedback — all in one place, so your creative team nails it on the very first iteration. From first spark to final delivery, all in one place.",
     img: "/os/atlas.webp",
+    video: "/os/Atlas.mp4",
     imgAlt: "Briefing & Asset Management",
   },
   {
@@ -38,6 +39,7 @@ const SERVICES: Service[] = [
     title: "Flowboards",
     desc: "From six-second hooks to full-scale TVCs, unleash visual stories at a scale you never thought possible. Collaboratively build creative workflows, choose from 100+ AI models and proprietary pipelines, and take precise control over every step across every channel, every format, every brief. Your imagination is the only limit.",
     img: "/os/infinite-flow.webp",
+    video: "/os/flowboard.mp4",
     imgAlt: "Flowboards",
   },
   {
@@ -46,6 +48,7 @@ const SERVICES: Service[] = [
     title: "App Builder",
     desc: "Turn your creative workflows into powerful no-code apps, so your best ideas scale without limits. Convert even your most complex creative workflows into simple, intuitive apps and put the power of world-class content creation in the hands of everyone in your organisation. Build once, create forever.",
     img: "/os/appstudio.webp",
+    video: "/os/app_1.mp4",
     imgAlt: "App Builder",
   },
   {

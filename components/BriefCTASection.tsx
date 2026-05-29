@@ -362,32 +362,59 @@ export default function BriefCTASection() {
         }
         .brief-file-remove:hover { color: rgb(248,113,113); }
 
-        /* ── Mobile card sizing ── */
+        /* ── Mobile section impact ── */
         @media (max-width: 768px) {
-          .brief-upload-card {
-            min-height: 0 !important;
-            padding: clamp(28px, 5vw, 40px) clamp(16px, 4vw, 28px) clamp(28px, 5vw, 40px) !important;
-            border-radius: 20px !important;
+          #brief-cta {
+            padding-top: clamp(80px, 14vh, 120px) !important;
+            padding-bottom: clamp(80px, 14vh, 120px) !important;
           }
-          .brief-folder-wrap { display: none !important; }
-          .brief-helper-text { display: none !important; }
-          .brief-dash-border rect { stroke-opacity: 0.35; stroke-dasharray: 5 7; }
+          #brief-cta h2 { font-size: clamp(42px, 10vw, 72px) !important; line-height: 1.0 !important; }
+          .brief-upload-card {
+            min-height: clamp(300px, 44vw, 400px) !important;
+            padding: clamp(28px, 5vw, 40px) clamp(16px, 4vw, 24px) clamp(52px, 7vw, 68px) !important;
+            border-radius: 24px !important;
+          }
+          .brief-dash-border rect { stroke-opacity: 0.3; stroke-dasharray: 5 7; }
         }
 
-        /* ── Mobile modal ── */
+        /* ── Mobile modal (bottom sheet) ── */
         @media (max-width: 600px) {
           .brief-overlay { padding: 0; align-items: flex-end; }
           .brief-panel {
-            width: 100%; max-height: 92dvh;
-            border-radius: 20px 20px 0 0;
+            width: 100%;
+            /* Cap height — actions pinned outside body so only body scrolls */
+            max-height: 84dvh;
+            border-radius: 24px 24px 0 0;
           }
-          .brief-panel-header { padding: 16px 18px; }
-          .brief-panel-body   { padding: 18px 18px 20px; gap: 14px; }
+          /* Drag-handle pill at top of sheet */
+          .brief-panel::before {
+            content: '';
+            display: block;
+            width: 36px; height: 4px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 99px;
+            margin: 12px auto 0;
+            flex-shrink: 0;
+            align-self: center;
+          }
+          .brief-panel-header {
+            padding: 8px 20px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+          }
+          /* Scrollable form area — body grows but never pushes actions offscreen */
+          .brief-panel-body { padding: 18px 20px 24px; gap: 12px; }
           .brief-input  { height: 48px; font-size: 16px; }
-          .brief-textarea { min-height: 110px; font-size: 16px; }
-          .brief-actions { padding-top: 14px; gap: 8px; }
-          .brief-btn    { height: 48px; font-size: 14px; }
-          .brief-dropzone { padding: 20px 12px; }
+          .brief-textarea { min-height: 100px; max-height: 140px; font-size: 16px; }
+          /* Pinned action bar with safe-area bottom padding */
+          .brief-actions {
+            flex-direction: column-reverse;
+            padding: 14px 20px max(20px, env(safe-area-inset-bottom, 20px));
+            gap: 8px;
+            margin-top: 0;
+          }
+          .brief-btn { height: 50px; font-size: 15px; width: 100%; }
+          .brief-btn-send { box-shadow: 0 4px 18px rgba(255,128,21,0.3); }
+          .brief-dropzone { padding: 16px 12px; }
           .brief-grid-2 { grid-template-columns: 1fr !important; }
         }
       `}</style>
@@ -752,14 +779,16 @@ export default function BriefCTASection() {
                 </p>
               )}
 
-              <div className="brief-actions">
-                <button type="button" className="brief-btn brief-btn-cancel" onClick={() => setIsModalOpen(false)}>
-                  Cancel
-                </button>
-                <button type="button" className="brief-btn brief-btn-send" onClick={sendBrief}>
-                  Send Brief
-                </button>
-              </div>
+            </div>
+
+            {/* Actions — outside scrollable body so they pin to the bottom */}
+            <div className="brief-actions">
+              <button type="button" className="brief-btn brief-btn-cancel" onClick={() => setIsModalOpen(false)}>
+                Cancel
+              </button>
+              <button type="button" className="brief-btn brief-btn-send" onClick={sendBrief}>
+                Send Brief
+              </button>
             </div>
           </div>
         </div>

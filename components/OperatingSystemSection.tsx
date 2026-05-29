@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
 // ── Product data ──────────────────────────────────────────────────────────────
@@ -62,6 +62,7 @@ const SERVICES: Service[] = [
 function Divider() {
   return (
     <div
+      className="os-divider"
       style={{
         height: 1,
         background:
@@ -74,6 +75,53 @@ function Divider() {
 // =============================================================================
 export default function OperatingSystemSection() {
   const [hovered, setHovered] = useState<number | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Mobile-only: alternating left/right slide-in via IntersectionObserver (works with Lenis)
+  useEffect(() => {
+    if (window.innerWidth > 860) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const cards = Array.from(section.querySelectorAll(".os-row-outer")) as HTMLElement[];
+
+    // Set initial invisible state after first paint to avoid flash
+    requestAnimationFrame(() => {
+      cards.forEach((card, i) => {
+        card.style.opacity = "0";
+        card.style.transform = `translateX(${i % 2 === 0 ? "-28px" : "28px"})`;
+        card.style.transition =
+          "opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1)";
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const el = entry.target as HTMLElement;
+            el.style.opacity = "1";
+            el.style.transform = "translateX(0)";
+            observer.unobserve(el);
+          });
+        },
+        { threshold: 0.08, rootMargin: "0px 0px -4% 0px" }
+      );
+
+      cards.forEach((card) => observer.observe(card));
+
+      // Store cleanup ref on the section element
+      (section as HTMLElement & { _osCleanup?: () => void })._osCleanup = () => {
+        observer.disconnect();
+        cards.forEach((c) => { c.style.opacity = ""; c.style.transform = ""; c.style.transition = ""; });
+      };
+    });
+
+    return () => {
+      (sectionRef.current as HTMLElement & { _osCleanup?: () => void })?._osCleanup?.();
+    };
+  }, []);
 
   return (
     <>
@@ -81,19 +129,45 @@ export default function OperatingSystemSection() {
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Roboto:wght@300;400;500&display=swap');
         .os-section * { box-sizing: border-box; }
         @media (max-width: 860px) {
-          .os-row-grid { grid-template-columns: 1fr !important; gap: clamp(16px, 3.5vw, 28px) !important; }
-          .os-row-img  { width: 100% !important; max-width: 480px !important; margin: 0 auto; order: 2 !important; }
+          /* Compact section padding on mobile */
+          .os-section { padding-top: clamp(48px, 7vw, 72px) !important; padding-bottom: clamp(36px, 5vw, 52px) !important; }
+          /* Hide hairline dividers — card box-shadow provides separation */
+          .os-row-outer .os-divider { display: none; }
+          .os-row-grid {
+            grid-template-columns: 1fr !important;
+            gap: clamp(14px, 3vw, 20px) !important;
+          }
+          .os-row-img {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 auto;
+            order: 2 !important;
+            aspect-ratio: 16 / 9 !important;
+            border-radius: 10px !important;
+          }
           .os-row-desc { order: 3 !important; }
           .os-row-label { order: 1 !important; }
-          .os-row-item { padding-top: clamp(20px, 3vh, 36px) !important; padding-bottom: clamp(20px, 3vh, 36px) !important; }
+          /* Grey-glass card — matches CardSwap aesthetic */
+          .os-row-item {
+            background: rgba(12, 12, 12, 0.85) !important;
+            border: none !important;
+            box-shadow: 0 0 0 1.5px rgba(255,255,255,0.13), inset 0 1px 0 rgba(255,255,255,0.08), 0 12px 40px rgba(0,0,0,0.7) !important;
+            border-radius: 16px !important;
+            padding: clamp(18px, 3vw, 24px) clamp(16px, 3vw, 20px) !important;
+            margin-bottom: 10px;
+            overflow: hidden !important;
+          }
+          .os-row-label h3 { font-size: clamp(22px, 5.5vw, 32px) !important; }
         }
         @media (max-width: 600px) {
-          .os-row-grid { gap: 16px !important; }
+          .os-row-grid { gap: 12px !important; }
           .os-row-desc p { font-size: 13px !important; }
+          .os-row-item { border-radius: 14px !important; }
         }
       `}</style>
 
       <section
+        ref={sectionRef}
         id="os-section"
         className="os-section"
         style={{
@@ -178,7 +252,7 @@ export default function OperatingSystemSection() {
           {SERVICES.map((svc, i) => {
             const isHovered = hovered === i;
             return (
-              <div key={i}>
+              <div key={i} className="os-row-outer">
                 {/* Service row */}
                 <div
                   className="os-row-grid os-row-item"

@@ -15,7 +15,14 @@ export default function StorytellingSection() {
   useEffect(() => {
     if (!sectionRef.current) return;
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) return;
+    const isMobile = window.innerWidth <= 768;
+
+    // On mobile ScrollTrigger won't fire — show all elements immediately
+    if (prefersReducedMotion || isMobile) {
+      gsap.set([badgeRef.current, headingRef.current, descRef.current],
+        { opacity: 1, y: 0, filter: "none" });
+      return;
+    }
 
     const ctx = gsap.context(() => {
       const baseTrigger = {

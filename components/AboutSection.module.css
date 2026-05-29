@@ -147,6 +147,9 @@
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .section {
+    /* No more 400vh dead scroll — section is exactly one viewport tall on mobile */
+    height: 100vh;
+    height: 100dvh;
     border-radius: 16px 16px 0 0;
     margin-top: -16px;
   }
@@ -155,9 +158,8 @@
   .sticky {
     border-radius: 16px 16px 0 0;
     justify-content: center;
-    gap: 36px;
-    /* shift the center of gravity upward so text lands in upper 40% */
-    padding-bottom: 12vh;
+    gap: clamp(52px, 8vh, 80px);
+    padding-bottom: 6vh;
   }
 
   .textWrap {
@@ -178,7 +180,7 @@
     width: 88vw;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: clamp(20px, 3vh, 32px);
   }
 
   /* Show badge on mobile as a single-line label above the logos */
@@ -234,7 +236,7 @@
   }
 
   .sticky {
-    padding-bottom: 10vh;
-    gap: 28px;
+    padding-bottom: 4vh;
+    gap: clamp(24px, 4vh, 40px);
   }
 }

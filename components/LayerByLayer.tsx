@@ -127,6 +127,8 @@ export default function LayerByLayer() {
   // Heading entrance animation for the "Why Poiroscope" area
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // On mobile ScrollTrigger doesn't fire — elements default to visible (no inline opacity:0)
+    if (window.innerWidth <= 768) return;
     const ctx = gsap.context(() => {
       if (whyRef.current) {
         gsap.fromTo(
@@ -179,11 +181,13 @@ export default function LayerByLayer() {
           .lbl-cards { order: -1; }
           .lbl-text-col { min-height: auto !important; padding-bottom: clamp(36px, 5vw, 52px) !important; }
           .lbl-card-body { display: none !important; }
-          .lbl-controls { padding-top: 28px; }
+          .lbl-text-body { display: none !important; }
+          .lbl-controls { padding-top: 20px; }
+          /* Tighter card spacing on mobile */
+          .scroll-stack-card { margin-bottom: clamp(14px, 2.5vw, 20px) !important; }
         }
         @media (max-width: 600px) {
           .lbl-text-col { padding-bottom: 32px !important; }
-          .lbl-controls { padding-top: 20px; }
         }
       `}</style>
 
@@ -276,7 +280,7 @@ export default function LayerByLayer() {
                       {PROBLEMS[activeIdx].title}
                     </h3>
 
-                    <p style={{
+                    <p className="lbl-text-body" style={{
                       fontFamily: "var(--font-family)",
                       fontSize: "clamp(13px, 1vw, 14.5px)",
                       color: "rgba(255,255,255,0.38)", lineHeight: 1.78, margin: 0,

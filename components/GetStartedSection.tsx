@@ -44,7 +44,16 @@ export default function GetStartedSection() {
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) return;
+    const isMobile = window.innerWidth <= 768;
+
+    // On mobile ScrollTrigger never fires — show everything immediately
+    if (prefersReducedMotion || isMobile) {
+      if (sectionRef.current) {
+        gsap.set(Array.from(sectionRef.current.querySelectorAll(".gs-anim")),
+          { opacity: 1, y: 0, filter: "none" });
+      }
+      return;
+    }
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
@@ -87,6 +96,8 @@ export default function GetStartedSection() {
           .gs-opts-row { grid-template-columns: 1fr !important; }
           .gs-cta-inner { flex-direction: column !important; text-align: center !important; align-items: center !important; }
           .gs-cta-link { width: 100% !important; justify-content: center !important; }
+          /* Reduce top padding — closes dead space after OperatingSystemSection */
+          .gs { padding-top: clamp(40px, 6vw, 56px) !important; }
         }
         @media (max-width: 480px) {
           .gs-step-cell { padding: 20px 16px !important; }

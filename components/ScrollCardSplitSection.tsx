@@ -82,10 +82,10 @@ const CARDS: CardData[] = [
   },
 ];
 
-// Arc-fan geometry: centre card highest, outer cards curve down
-const ARC_ROT     = [-22, -11, 0, 11, 22];
-const ARC_DY_PX   = [200, 65,  0, 65, 200];
-const ARC_FX_MULT = [0.35, 0.18, 0, -0.18, -0.35];
+// Flat-fan geometry: all cards spread out straight (no arch)
+const ARC_ROT     = [0, 0, 0, 0, 0];
+const ARC_DY_PX   = [0, 0, 0, 0, 0];
+const ARC_FX_MULT = [0, 0, 0, 0, 0];
 const FAN_Z       = [1, 2, 3, 4, 5];
 
 const R = 18;

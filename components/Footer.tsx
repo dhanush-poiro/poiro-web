@@ -129,7 +129,7 @@ export default function Footer() {
             <h2 className={styles.heading}>
               Ship <em>more</em>, Spend <em>less</em> <br /> Create without <em>Limits</em>
             </h2>
-            <a href="#send-idea" className={styles.ctaButton}>
+            <a href="/get-access" className={styles.ctaButton}>
               Get in Touch
             </a>
           </div>
@@ -141,9 +141,9 @@ export default function Footer() {
           <div ref={bottomBarRef} className={styles.bottomBar}>
             <p className={styles.copyright}>© 2026 Poiro&nbsp;|&nbsp;All Rights Reserved</p>
             <nav className={styles.links} aria-label="Footer navigation">
-              <a href="#" className={styles.link}>Services</a>
-              <a href="#" className={styles.link}>Featured Work</a>
-              <a href="#" className={styles.link}>Privacy</a>
+              {/* TODO: replace # with real LinkedIn and Instagram URLs */}
+              <a href="#" className={styles.link} aria-label="Poiro on LinkedIn" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              <a href="#" className={styles.link} aria-label="Poiro on Instagram" target="_blank" rel="noopener noreferrer">Instagram</a>
             </nav>
           </div>
         </div>

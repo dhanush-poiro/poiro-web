@@ -43,7 +43,7 @@
   --gradient-card: linear-gradient(145deg, #111111 0%, #0a0a0a 100%);
 
   /* Typography */
-  --font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-bold: 700;
@@ -245,24 +245,28 @@ ol {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  padding: var(--space-2) var(--space-4);
-  background: var(--color-primary);
-  color: var(--color-bg);
-  font-size: var(--text-base);
+  padding: 10px var(--space-5);
+  background: linear-gradient(135deg, #ff8015 0%, #ff4500 100%);
+  color: #fff;
+  font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+  font-size: var(--text-lg);
   font-weight: var(--font-weight-bold);
+  letter-spacing: 0.04em;
   border-radius: var(--radius-full);
+  box-shadow: 0 0 24px rgba(255, 128, 21, 0.35), 0 4px 16px rgba(255, 69, 0, 0.25);
   transition: all var(--duration-normal) var(--ease-out-expo);
   white-space: nowrap;
 }
 
 .btn-primary:hover {
-  background: var(--color-primary-hover);
+  background: linear-gradient(135deg, #ff9a40 0%, #ff5500 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(255, 128, 21, 0.3);
+  box-shadow: 0 0 36px rgba(255, 128, 21, 0.55), 0 8px 24px rgba(255, 69, 0, 0.35);
 }
 
 .btn-primary:active {
   transform: translateY(0);
+  box-shadow: 0 0 16px rgba(255, 128, 21, 0.3);
 }
 
 .btn-secondary {

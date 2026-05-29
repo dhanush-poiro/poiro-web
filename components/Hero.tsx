@@ -211,8 +211,8 @@ export default function Hero() {
           <h1 className={styles.heading}>
             Engineering Creativity.
           </h1>
-          <a href="https://calendly.com/sameer-poiro/poiro-introduction-with-founders" className={styles.ctaBtn} id="hero-cta" target="_blank" rel="noopener noreferrer">
-            Book Demo
+          <a href="/get-access" className={styles.ctaBtn} id="hero-cta">
+            Get Access
           </a>
         </div>
 

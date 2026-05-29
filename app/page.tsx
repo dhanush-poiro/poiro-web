@@ -4,14 +4,10 @@ import ScrollCardSplitSection from "@/components/ScrollCardSplitSection";
 import StorytellingSection from "@/components/StorytellingSection";
 import LayerByLayer from "@/components/LayerByLayer";
 import OperatingSystemSection from "@/components/OperatingSystemSection";
-import VideoScrub from "@/components/VideoScrub";
+import WhyPoiroscopeSection from "@/components/WhyPoiroscopeSection";
 import GetStartedSection from "@/components/GetStartedSection";
 import MasonryGallerySection from "@/components/MasonryGallerySection";
-import BriefCTASection from "@/components/BriefCTASection";
 import Footer from "@/components/Footer";
-
-// Toggle to show/hide the "Here's what happens to your brief" section
-const SHOW_BRIEF_SECTION = false;
 
 export default function Home() {
   return (
@@ -25,10 +21,9 @@ export default function Home() {
       <StorytellingSection />
       <LayerByLayer />
       <OperatingSystemSection />
-      {SHOW_BRIEF_SECTION && <VideoScrub />}
+      <WhyPoiroscopeSection />
       <GetStartedSection />
       <MasonryGallerySection />
-      <BriefCTASection />
       <Footer />
     </>
   );

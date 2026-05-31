@@ -122,7 +122,18 @@ export default function Navbar() {
     <>
       <div style={bar} id="navbar">
         {/* Logo */}
-        <a href="#" aria-label="Poiro home" style={logoStyle} onClick={closeMenu}>
+        <a
+          href="/"
+          aria-label="Poiro home"
+          style={logoStyle}
+          onClick={e => {
+            closeMenu();
+            if (window.location.pathname === '/') {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }}
+        >
           <Image
             src="/assets/logo.png"
             alt="Poiro"

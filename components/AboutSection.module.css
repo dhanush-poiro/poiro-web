@@ -154,12 +154,13 @@
     margin-top: -16px;
   }
 
-  /* On mobile: stack text + logo band vertically as flex children, centered as a group */
+  /* On mobile: top-align content so logos sit near bottom with no dead space below */
   .sticky {
     border-radius: 16px 16px 0 0;
-    justify-content: center;
-    gap: clamp(72px, 11vh, 100px);
-    padding-bottom: 6vh;
+    justify-content: flex-start;
+    padding-top: clamp(80px, 12vh, 120px);
+    padding-bottom: 0;
+    gap: clamp(28px, 5vh, 48px);
   }
 
   .textWrap {

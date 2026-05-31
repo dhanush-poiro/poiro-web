@@ -76,11 +76,14 @@ export default function Navbar() {
     padding:    0,
   };
 
+  const NAV_FONT = "'Helvetica Neue', Arial, sans-serif";
+
   const link: CSSProperties = {
-    fontSize:      13,
+    fontFamily:    NAV_FONT,
+    fontSize:      14,
     fontWeight:    500,
-    color:         'rgba(255,255,255,0.72)',
-    letterSpacing: '0.015em',
+    color:         'rgba(255,255,255,0.78)',
+    letterSpacing: '0.02em',
     textDecoration: 'none',
     transition:    'color 0.15s ease',
   };
@@ -89,11 +92,12 @@ export default function Navbar() {
     flexShrink:    0,
     display:       'inline-flex',
     alignItems:    'center',
-    padding:       '8px 18px',
+    padding:       '8px 16px',
     borderRadius:  8,
     background:    '#ececec',
     border:        '1px solid rgba(255,255,255,0.18)',
     color:         '#0c0c0c',
+    fontFamily:    NAV_FONT,
     fontSize:      13,
     fontWeight:    600,
     letterSpacing: '0.01em',
@@ -203,12 +207,13 @@ export default function Navbar() {
                 href={href}
                 onClick={closeMenu}
                 style={{
-                  fontSize:       'clamp(26px, 7.5vw, 40px)',
+                  fontFamily:     NAV_FONT,
+                  fontSize:       'clamp(22px, 6vw, 34px)',
                   fontWeight:     500,
                   color:          'rgba(255,255,255,0.82)',
                   textDecoration: 'none',
                   padding:        '18px 0',
-                  letterSpacing:  '-0.01em',
+                  letterSpacing:  '0.01em',
                   width:          '100%',
                   textAlign:      'center',
                   borderBottom:   '1px solid rgba(255,255,255,0.06)',
@@ -226,6 +231,7 @@ export default function Navbar() {
               href="/get-access"
               onClick={closeMenu}
               style={{
+                fontFamily:     NAV_FONT,
                 display:        'inline-flex',
                 alignItems:     'center',
                 padding:        '14px 44px',
@@ -247,6 +253,7 @@ export default function Navbar() {
               onClick={closeMenu}
               style={{
                 display:        'inline-flex',
+                fontFamily:     NAV_FONT,
                 alignItems:     'center',
                 padding:        '14px 44px',
                 borderRadius:   10,

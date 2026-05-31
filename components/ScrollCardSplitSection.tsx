@@ -467,6 +467,7 @@ export default function ScrollCardSplitSection() {
                       zIndex: fanned ? FAN_Z[i] : 0,
                       perspective: "1200px",
                       transform: `translateX(${sx}px)`,
+                      transition: "transform 0.55s cubic-bezier(0.16, 1, 0.3, 1)",
                       cursor: fanned ? "pointer" : "default",
                     }}
                   >
@@ -489,7 +490,7 @@ export default function ScrollCardSplitSection() {
                           transformStyle: "preserve-3d",
                           transform: `rotateY(${fanned ? -180 : 0}deg)`,
                           transition:
-                            "transform 0.72s 0.28s cubic-bezier(0.16, 1, 0.3, 1)",
+                            "transform 0.72s 0s cubic-bezier(0.16, 1, 0.3, 1)",
                           willChange: "transform",
                         }}
                       >

@@ -57,6 +57,7 @@ const SERVICES: Service[] = [
     title: "AI Editing Studio",
     desc: "Polish every pixel, perfect every frame. AI-powered editing, entirely on your terms. Edit images and videos with a level of precision and finesse that was once the preserve of the most skilled editors — because no one understands your creative vision better than you. Because the details are everything.",
     img: "/os/poiro-studio.webp",
+    video: "/os/AI%20Editing%20Studio.mp4",
     imgAlt: "AI Editing Studio",
   },
 ];

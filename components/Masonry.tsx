@@ -35,12 +35,6 @@ interface MasonryProps {
   animationKey?: number;
 }
 
-const VIDEO_PREVIEW_FALLBACK =
-  "data:image/svg+xml;utf8," +
-  encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 9"><rect width="16" height="9" fill="#151515"/><path d="M6 3.2v2.6L9.2 4.5z" fill="#8a8a8a"/></svg>'
-  );
-
 // Responsive column count hook
 function useColumnCount() {
   const [cols, setCols] = useState(4);
@@ -65,15 +59,12 @@ function useMeasure<T extends HTMLElement>() {
 
   useLayoutEffect(() => {
     if (!ref.current) return;
-
     const update = () => {
       if (!ref.current) return;
       const w = ref.current.getBoundingClientRect().width;
       setWidth((prev) => (prev === w ? prev : w));
     };
-
     update();
-
     const ro = new ResizeObserver(() => {
       if (frameRef.current !== null) return;
       frameRef.current = requestAnimationFrame(() => {
@@ -81,7 +72,6 @@ function useMeasure<T extends HTMLElement>() {
         update();
       });
     });
-
     ro.observe(ref.current);
     return () => {
       ro.disconnect();
@@ -134,27 +124,8 @@ export default function Masonry({
 }: MasonryProps) {
   const columns = useColumnCount();
   const [containerRef, containerWidth] = useMeasure<HTMLDivElement>();
-  const [hoveredVideoId, setHoveredVideoId] = useState<string | null>(null);
-  const [videoPlayingById, setVideoPlayingById] = useState<Record<string, boolean>>({});
-  const [previewSrcById, setPreviewSrcById] = useState<Record<string, string>>({});
-  const previewCacheRef = useRef<Record<string, boolean>>({});
-  const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
-
-  const getVideoPreviewSrc = (src: string) =>
-    src.replace(/\.(webm|mp4|mov|m4v)(\?.*)?$/i, ".webp$2");
-
-  const checkPreviewExists = async (previewSrc: string) => {
-    const cached = previewCacheRef.current[previewSrc];
-    if (typeof cached === "boolean") return cached;
-    try {
-      const res = await fetch(previewSrc, { method: "HEAD" });
-      previewCacheRef.current[previewSrc] = res.ok;
-      return res.ok;
-    } catch {
-      previewCacheRef.current[previewSrc] = false;
-      return false;
-    }
-  };
+  // Map from item.id → <video> element
+  const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
 
   const getInitialPosition = useCallback(
     (item: MasonryItem & { x: number; y: number; w: number; h: number }) => {
@@ -175,68 +146,60 @@ export default function Masonry({
     [animateFrom]
   );
 
-  // Reset video state when items change (tab switch)
+  // Pause & reset all videos on tab switch, clear ref map
   useEffect(() => {
-    Object.values(videoRefs.current).forEach((v) => {
-      if (!v) return;
-      v.pause();
-      v.currentTime = 0;
-    });
-    const raf = requestAnimationFrame(() => {
-      setHoveredVideoId(null);
-      setVideoPlayingById({});
-      videoRefs.current = {};
-    });
+    videoRefs.current.forEach((v) => { v.pause(); v.currentTime = 0; });
+    const raf = requestAnimationFrame(() => videoRefs.current.clear());
     return () => cancelAnimationFrame(raf);
   }, [items]);
 
-  // Resolve video preview thumbnails
+  // Page visibility — pause all when tab hidden; IO re-plays when tab returns
   useEffect(() => {
-    let cancelled = false;
-    const videoItems = items.filter((i) => i.type === "video");
-
-    if (!videoItems.length) {
-      const raf = requestAnimationFrame(() => setPreviewSrcById({}));
-      return () => cancelAnimationFrame(raf);
-    }
-
-    const raf = requestAnimationFrame(() => {
-      setPreviewSrcById((prev) => {
-        const next: Record<string, string> = {};
-        for (const item of videoItems) {
-          next[item.id] = prev[item.id] ?? VIDEO_PREVIEW_FALLBACK;
-        }
-        return next;
-      });
-    });
-
-    const resolve = async () => {
-      for (const item of videoItems) {
-        if (cancelled) return;
-        const previewSrc = getVideoPreviewSrc(item.src);
-        const exists = await checkPreviewExists(previewSrc);
-        if (cancelled) return;
-        setPreviewSrcById((prev) => ({
-          ...prev,
-          [item.id]: exists ? previewSrc : VIDEO_PREVIEW_FALLBACK,
-        }));
+    const onVisibility = () => {
+      if (document.hidden) {
+        videoRefs.current.forEach((v) => v.pause());
       }
+      // Re-play is handled by IntersectionObserver firing on visibility restore
     };
-    void resolve();
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
 
-    return () => {
-      cancelled = true;
-      cancelAnimationFrame(raf);
-    };
-  }, [items]);
+  // IntersectionObserver — play/pause each video based on viewport visibility
+  useEffect(() => {
+    if (!videoRefs.current.size) return;
 
-  // Compute grid layout with gap spacing
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) {
+            // Kick off play; ignore NotAllowedError (autoplay policy)
+            if (video.paused) video.play().catch(() => {});
+          } else {
+            if (!video.paused) video.pause();
+          }
+        });
+      },
+      {
+        // 100px early-trigger: start playing slightly before fully in view
+        rootMargin: "100px 0px 100px 0px",
+        threshold: 0.1,
+      }
+    );
+
+    videoRefs.current.forEach((v) => observer.observe(v));
+    return () => observer.disconnect();
+  // Re-run after grid settles (new items, new layout)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, containerWidth]);
+
+  // Compute grid layout
   const grid = useMemo(() => {
     if (!containerWidth || containerWidth < 100) return [];
     const gapPx = gap ?? 20;
     const colWidth = (containerWidth - gapPx * (columns - 1)) / columns;
     const colHeights = new Array<number>(columns).fill(0);
-
     return items.map((item) => {
       const col = colHeights.indexOf(Math.min(...colHeights));
       const aspect = Math.min(Math.max(item.aspectRatio || 1, 0.45), 2.2);
@@ -253,64 +216,40 @@ export default function Masonry({
     [grid]
   );
 
-  const hasMounted      = useRef(false);
-  const lastAnimKey     = useRef(animationKey);
+  const hasMounted  = useRef(false);
+  const lastAnimKey = useRef(animationKey);
 
   useLayoutEffect(() => {
     if (!containerRef.current || !grid.length) return;
-
     const isEntrance = !hasMounted.current || animationKey !== lastAnimKey.current;
 
     grid.forEach((item, index) => {
-      const el = containerRef.current?.querySelector<HTMLElement>(
-        `[data-key="${item.id}"]`
-      );
+      const el = containerRef.current?.querySelector<HTMLElement>(`[data-key="${item.id}"]`);
       if (!el) return;
-
       const target = { x: item.x, y: item.y, width: item.w, height: item.h };
 
       if (isEntrance) {
         const from = getInitialPosition(item);
         gsap.fromTo(
           el,
-          {
-            opacity: 0,
-            x: from.x,
-            y: from.y,
-            width: item.w,
-            height: item.h,
-            ...(blurToFocus && { filter: "blur(10px)" }),
-          },
-          {
-            opacity: 1,
-            ...target,
+          { opacity: 0, x: from.x, y: from.y, width: item.w, height: item.h,
+            ...(blurToFocus && { filter: "blur(10px)" }) },
+          { opacity: 1, ...target,
             ...(blurToFocus && { filter: "blur(0px)" }),
-            duration,
-            ease,
-            delay: index * stagger,
-          }
+            duration, ease, delay: index * stagger }
         );
       } else {
-        gsap.to(el, {
-          ...target,
-          opacity: 1,
+        gsap.to(el, { ...target, opacity: 1,
           ...(blurToFocus && { filter: "blur(0px)" }),
-          duration,
-          ease,
-          overwrite: "auto",
-        });
+          duration, ease, overwrite: "auto" });
       }
     });
 
-    hasMounted.current   = true;
-    lastAnimKey.current  = animationKey;
+    hasMounted.current  = true;
+    lastAnimKey.current = animationKey;
   }, [grid, stagger, blurToFocus, duration, ease, animationKey, getInitialPosition, containerRef]);
 
-  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>, item: MasonryItem) => {
-    if (item.type === "video") {
-      setHoveredVideoId(item.id);
-      setVideoPlayingById((p) => ({ ...p, [item.id]: false }));
-    }
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     if (scaleOnHover) {
       gsap.to(e.currentTarget, { scale: hoverScale, force3D: true, duration: 0.3, ease: "power2.out" });
     }
@@ -320,13 +259,7 @@ export default function Masonry({
     }
   };
 
-  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>, item: MasonryItem) => {
-    if (item.type === "video") {
-      const v = videoRefs.current[item.id];
-      if (v) { v.pause(); v.currentTime = 0; }
-      setVideoPlayingById((p) => ({ ...p, [item.id]: false }));
-      setHoveredVideoId((cur) => (cur === item.id ? null : cur));
-    }
+  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
     if (scaleOnHover) {
       gsap.to(e.currentTarget, { scale: 1, force3D: true, duration: 0.3, ease: "power2.out" });
     }
@@ -341,90 +274,49 @@ export default function Masonry({
       <style>{MASONRY_STYLES}</style>
       <div
         ref={containerRef}
-        style={{
-          position: "relative",
-          height: maxHeight ? `${maxHeight}px` : "320px",
-        }}
+        style={{ position: "relative", height: maxHeight ? `${maxHeight}px` : "320px" }}
       >
-        {grid.map((item) => {
-          const isActiveVideo   = hoveredVideoId === item.id;
-          const isVideoPlaying  = videoPlayingById[item.id] === true;
-          const hidePreview     = isActiveVideo && isVideoPlaying;
-
-          return (
-            <div
-              key={item.id}
-              data-key={item.id}
-              className="masonry-wrapper"
-              onClick={() => window.open(item.url, "_blank", "noopener")}
-              onMouseEnter={(e) => handleMouseEnter(e, item)}
-              onMouseLeave={(e) => handleMouseLeave(e, item)}
-            >
-              <div className="masonry-inner">
-                {item.type === "video" ? (
-                  <>
-                    {isActiveVideo && (
-                      <video
-                        ref={(node) => { videoRefs.current[item.id] = node; }}
-                        src={item.src}
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="metadata"
-                        onPlaying={() =>
-                          setVideoPlayingById((p) => ({ ...p, [item.id]: true }))
-                        }
-                        style={{
-                          position: "absolute",
-                          inset: 0,
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          zIndex: 0,
-                        }}
-                      />
-                    )}
-                    <Image
-                      src={previewSrcById[item.id] ?? VIDEO_PREVIEW_FALLBACK}
-                      alt="video preview"
-                      fill
-                      loading="lazy"
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      style={{
-                        objectFit: "cover",
-                        position: "absolute",
-                        inset: 0,
-                        zIndex: 1,
-                        opacity: hidePreview ? 0 : 1,
-                        transition: isActiveVideo
-                          ? "opacity 0.25s ease-out"
-                          : "opacity 0s linear",
-                      }}
-                      onError={() =>
-                        setPreviewSrcById((p) =>
-                          p[item.id] === VIDEO_PREVIEW_FALLBACK
-                            ? p
-                            : { ...p, [item.id]: VIDEO_PREVIEW_FALLBACK }
-                        )
-                      }
-                    />
-                  </>
-                ) : (
-                  <Image
-                    src={item.src}
-                    alt="gallery image"
-                    fill
-                    loading="lazy"
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    style={{ objectFit: "cover" }}
-                  />
-                )}
-                {colorShiftOnHover && <div className="masonry-color-overlay" />}
-              </div>
+        {grid.map((item) => (
+          <div
+            key={item.id}
+            data-key={item.id}
+            className="masonry-wrapper"
+            onClick={() => window.open(item.url, "_blank", "noopener")}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <div className="masonry-inner">
+              {item.type === "video" ? (
+                <video
+                  ref={(node) => {
+                    if (node) videoRefs.current.set(item.id, node);
+                    // Don't delete on null — cleanup is handled by items-change effect
+                  }}
+                  src={item.src}
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  style={{
+                    position: "absolute", inset: 0,
+                    width: "100%", height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              ) : (
+                <Image
+                  src={item.src}
+                  alt="gallery image"
+                  fill
+                  loading="lazy"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  style={{ objectFit: "cover" }}
+                />
+              )}
+              {colorShiftOnHover && <div className="masonry-color-overlay" />}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </>
   );

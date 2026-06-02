@@ -268,8 +268,9 @@ export default function OperatingSystemSection() {
                     gap: "clamp(24px, 3vw, 48px)",
                     alignItems: "center",
                     padding: "clamp(36px, 5vh, 68px) 0",
-                    transform: isHovered ? "scale(1.015)" : "scale(1)",
-                    transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                    transform: isHovered ? "scale(1.025)" : "scale(1)",
+                    boxShadow: isHovered ? "0 24px 60px rgba(0,0,0,0.70)" : "none",
+                    transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
                     cursor: "default",
                   }}
                 >
@@ -341,7 +342,7 @@ export default function OperatingSystemSection() {
                       borderRadius: 12,
                       overflow: "hidden",
                       position: "relative",
-                      transform: isHovered ? "scale(1.03)" : "scale(1)",
+                      transform: isHovered ? "scale(1.06)" : "scale(1)",
                       transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
                     }}
                   >

@@ -23,10 +23,10 @@
   overflow: hidden;
   border-radius: 24px 24px 0 0;
   
-  /* Apply grid background here so it remains physically static during the 400vh scroll */
-  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 2px, transparent 2px);
-  background-size: 48px 48px;
-  background-position: center top;
+  /* DOT_GRID_OFF — uncomment to re-enable */
+  /* background-image: radial-gradient(rgba(255, 255, 255, 0.12) 2px, transparent 2px); */
+  /* background-size: 48px 48px; */
+  /* background-position: center top; */
 }
 
 /* ── Text block ── */
@@ -147,20 +147,21 @@
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .section {
-    /* No more 400vh dead scroll — section is exactly one viewport tall on mobile */
-    height: 100vh;
-    height: 100dvh;
+    height: auto;
     border-radius: 16px 16px 0 0;
     margin-top: -16px;
   }
 
-  /* On mobile: top-align content so logos sit near bottom with no dead space below */
+  /* On mobile: remove sticky/fixed-height behaviour — section shrinks to content */
   .sticky {
+    position: relative;
+    height: auto;
     border-radius: 16px 16px 0 0;
     justify-content: flex-start;
-    padding-top: clamp(80px, 12vh, 120px);
-    padding-bottom: 0;
+    padding-top: clamp(80px, 12vh, 110px);
+    padding-bottom: clamp(40px, 7vh, 64px);
     gap: clamp(28px, 5vh, 48px);
+    overflow: visible;
   }
 
   .textWrap {

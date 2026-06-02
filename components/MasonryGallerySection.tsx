@@ -123,7 +123,9 @@ export default function MasonryGallerySection() {
         setAnimationCycle((n) => n + 1);
         observer.disconnect();
       },
-      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
+      // 400px early trigger: Masonry renders (and videos start preloading via
+      // preload="metadata") before the section scrolls into view
+      { threshold: 0, rootMargin: "400px 0px 0px 0px" }
     );
     observer.observe(sectionRef.current);
     return () => observer.disconnect();

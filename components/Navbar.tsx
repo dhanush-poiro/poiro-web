@@ -120,6 +120,24 @@ export default function Navbar() {
 
   return (
     <>
+      <style>{`
+        @keyframes nav-shimmer {
+          0%   { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+        @keyframes nav-border-pulse {
+          0%, 100% { border-color: rgba(255,255,255,0.22); box-shadow: none; }
+          50%       { border-color: rgba(255,255,255,0.52); box-shadow: 0 0 8px rgba(255,255,255,0.1); }
+        }
+        #nav-cta {
+          background: linear-gradient(105deg, #e8e8e8 35%, #fff 50%, #e8e8e8 65%) !important;
+          background-size: 250% 100% !important;
+          animation: nav-shimmer 3.5s linear infinite !important;
+        }
+        #nav-access-btn {
+          animation: nav-border-pulse 2.5s ease-in-out infinite;
+        }
+      `}</style>
       <div style={bar} id="navbar">
         {/* Logo */}
         <a
@@ -156,7 +174,7 @@ export default function Navbar() {
         {/* Desktop: CTA buttons */}
         {!isMobile && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <a href="/get-access" style={{ ...cta, background: 'transparent', color: 'rgba(255,255,255,0.85)', border: '1px solid rgba(255,255,255,0.22)' }}>
+            <a href="/get-access" id="nav-access-btn" style={{ ...cta, background: 'transparent', color: 'rgba(255,255,255,0.85)', border: '1px solid rgba(255,255,255,0.22)' }}>
               Get Access
             </a>
             <a href={CALENDLY} target="_blank" rel="noopener noreferrer" style={cta} id="nav-cta">

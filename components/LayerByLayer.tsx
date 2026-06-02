@@ -54,7 +54,7 @@ function ProblemCard({ tag, title, body, rotate = 0 }: { tag: string; title: str
       <span style={{
         display: "inline-block",
         fontFamily: "var(--font-family)",
-        fontSize: 10, fontWeight: 700,
+        fontSize: 11, fontWeight: 700,
         textTransform: "uppercase", letterSpacing: "1.3px", color: ORANGE,
         background: "rgba(255,128,21,0.10)", border: "1px solid rgba(255,128,21,0.22)",
         padding: "3px 10px", borderRadius: 20, marginBottom: 14,
@@ -71,7 +71,7 @@ function ProblemCard({ tag, title, body, rotate = 0 }: { tag: string; title: str
       </h3>
       <p style={{
         fontFamily: "var(--font-family)",
-        fontSize: "clamp(12px, 0.9vw, 14px)",
+        fontSize: "clamp(13px, 1vw, 16px)",
         color: "rgba(255,255,255,0.38)", lineHeight: 1.75, margin: 0,
       }}>
         {body}

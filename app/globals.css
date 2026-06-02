@@ -43,7 +43,7 @@
   --gradient-card: linear-gradient(145deg, #111111 0%, #0a0a0a 100%);
 
   /* Typography */
-  --font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+  --font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-bold: 700;
@@ -120,7 +120,10 @@
 }
 
 html {
-  font-size: 16px;
+  /* Scale the rem base to compensate for Windows 125% DPI calibration vs Mac standard DPI.
+     Mac laptops typically have 1280–1440px CSS viewport → 0.9vw ≈ 11.5–13px → clamps to 13px (81% of 16).
+     Wide desktop viewports (1778px+) → 0.9vw ≥ 16px → caps at 16px, keeping the desktop layout full-size. */
+  font-size: clamp(13px, 0.9vw, 16px);
   scroll-behavior: auto; /* Lenis handles smooth scroll */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -248,7 +251,7 @@ ol {
   padding: 10px var(--space-5);
   background: linear-gradient(135deg, #ff8015 0%, #ff4500 100%);
   color: #fff;
-  font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+  font-family: var(--font-family);
   font-size: var(--text-lg);
   font-weight: var(--font-weight-bold);
   letter-spacing: 0.04em;

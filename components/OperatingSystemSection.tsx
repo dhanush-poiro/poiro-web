@@ -308,8 +308,8 @@ export default function OperatingSystemSection() {
                   <div className="os-row-desc" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                     <span
                       style={{
-                        fontFamily: "'Cormorant Garamond', serif",
-                        fontSize: "clamp(16px, 1.4vw, 22px)",
+                        fontFamily: "'Helvetica Neue', Arial, sans-serif",
+                        fontSize: "clamp(14px, 1.3vw, 19px)",
                         fontWeight: 500,
                         fontStyle: "italic",
                         color: "rgba(240, 234, 222, 0.7)",
@@ -322,7 +322,7 @@ export default function OperatingSystemSection() {
                     <p
                       style={{
                         fontFamily: "'Roboto', sans-serif",
-                        fontSize: "clamp(12px, 0.95vw, 14px)",
+                        fontSize: "clamp(14px, 1.1vw, 16px)",
                         fontWeight: 300,
                         color: "rgba(255, 255, 255, 0.38)",
                         lineHeight: 1.75,

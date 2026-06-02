@@ -4,9 +4,9 @@ import { useEffect, useState, CSSProperties } from 'react';
 import Image from 'next/image';
 
 const NAV_LINKS = [
-  { href: '#os-section', label: 'Poiroscope OS' },
-  { href: '#gallery',    label: 'Featured Work' },
-  { href: '/upload',     label: 'Upload Brief' },
+  { href: '/#os-section', label: 'Poiroscope OS' },
+  { href: '/#gallery',    label: 'Featured Work' },
+  { href: '/upload',      label: 'Upload Brief' },
 ];
 
 const CALENDLY = 'https://calendly.com/sameer-poiro/poiro-introduction-with-founders';

@@ -143,7 +143,7 @@ export default function StorytellingSection() {
           ref={descRef}
           style={{
             fontFamily: "var(--font-family)",
-            fontSize: "clamp(0.95rem, 1.4vw, 1.25rem)",
+            fontSize: "clamp(1rem, 1.4vw, 1.3rem)",
             color: "var(--color-text-secondary)",
             lineHeight: 1.7,
             maxWidth: 760,

@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const SHOW_DOT_GRID = false; // set true to re-enable dot grid background
+
 // ── math ──────────────────────────────────────────────────────────────────────
 const easeInOut = (t: number): number =>
   t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
@@ -35,10 +38,10 @@ const CARDS: CardData[] = [
     sub: "Discover trends and build context-rich briefs that align your vision seamlessly.",
   },
   {
-    back: "linear-gradient(150deg, #1a2744 0%, #142038 60%, #0d1528 100%)",
+    back: "linear-gradient(150deg, #161616 0%, #111111 60%, #0a0a0a 100%)",
     textColor: "#ffffff",
     subColor: "rgba(255,255,255,0.42)",
-    border: "0.5px solid rgba(100,130,200,0.2)",
+    border: "0.5px solid rgba(255,255,255,0.08)",
     iconSvg: `<svg width="24" height="20" viewBox="0 0 24 20" fill="none">
       <rect x="2" y="2" width="20" height="16" rx="3" stroke="rgba(255,255,255,0.6)" stroke-width="1.4"/>
       <path d="M7 8h10M7 12h6" stroke="rgba(255,255,255,0.6)" stroke-width="1.4" stroke-linecap="round"/>
@@ -57,13 +60,13 @@ const CARDS: CardData[] = [
     sub: "Generate on-brand content at any scale — from hooks to full TVCs.",
   },
   {
-    back: "linear-gradient(150deg, #e83535 0%, #c41e1e 48%, #8f1010 100%)",
-    textColor: "#ffffff",
-    subColor: "rgba(255,255,255,0.42)",
+    back: "linear-gradient(155deg, #f0ebe2 0%, #e8e3d8 50%, #ddd8cc 100%)",
+    textColor: "#161616",
+    subColor: "rgba(22,22,22,0.48)",
     iconSvg: `<svg width="24" height="20" viewBox="0 0 24 20" fill="none">
-      <circle cx="9"  cy="6"  r="4" stroke="rgba(255,255,255,0.82)" stroke-width="1.5"/>
-      <circle cx="15" cy="6"  r="4" stroke="rgba(255,255,255,0.82)" stroke-width="1.5"/>
-      <circle cx="12" cy="14" r="4" stroke="rgba(255,255,255,0.82)" stroke-width="1.5"/>
+      <circle cx="9"  cy="6"  r="4" stroke="rgba(22,22,22,0.7)" stroke-width="1.5"/>
+      <circle cx="15" cy="6"  r="4" stroke="rgba(22,22,22,0.7)" stroke-width="1.5"/>
+      <circle cx="12" cy="14" r="4" stroke="rgba(22,22,22,0.7)" stroke-width="1.5"/>
     </svg>`,
     title: "Automation &\nScaling",
     sub: "Convert workflows into no-code apps and scale your best creative processes.",
@@ -111,9 +114,11 @@ function MobileCardGallery() {
       className="scs"
       style={{
         backgroundColor: "#070707",
-        backgroundImage: "radial-gradient(rgba(255,255,255,0.10) 2px, transparent 2px)",
-        backgroundSize: "48px 48px",
-        backgroundPosition: "center top",
+        ...(SHOW_DOT_GRID ? {
+          backgroundImage: "radial-gradient(rgba(255,255,255,0.10) 2px, transparent 2px)",
+          backgroundSize: "48px 48px",
+          backgroundPosition: "center top",
+        } : {}),
         position: "relative",
         zIndex: 10,
         padding: "clamp(52px, 8vh, 72px) 0 clamp(44px, 7vh, 60px)",
@@ -357,10 +362,11 @@ export default function ScrollCardSplitSection() {
           position: "relative",
           zIndex: 10,
           backgroundColor: "#070707",
-          backgroundImage:
-            "radial-gradient(rgba(255,255,255,0.12) 2px, transparent 2px)",
-          backgroundSize: "48px 48px",
-          backgroundPosition: "center top",
+          ...(SHOW_DOT_GRID ? {
+            backgroundImage: "radial-gradient(rgba(255,255,255,0.12) 2px, transparent 2px)",
+            backgroundSize: "48px 48px",
+            backgroundPosition: "center top",
+          } : {}),
           fontFamily: "'Inter', sans-serif",
         }}
       >

@@ -155,12 +155,14 @@ export default function GetAccessPage() {
 
       <main className="ga-page">
 
-        {/* Dot grid */}
-        <div style={{
-          position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
-          backgroundImage: 'radial-gradient(rgba(255,255,255,0.055) 1.5px, transparent 1.5px)',
-          backgroundSize: '44px 44px',
-        }} />
+        {/* Dot grid — SHOW_DOT_GRID: set to true to re-enable */}
+        {false && (
+          <div style={{
+            position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
+            backgroundImage: 'radial-gradient(rgba(255,255,255,0.055) 1.5px, transparent 1.5px)',
+            backgroundSize: '44px 44px',
+          }} />
+        )}
 
         {/* ── LEFT: form ── */}
         <div className="ga-left">

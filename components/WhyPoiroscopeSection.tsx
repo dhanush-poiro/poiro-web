@@ -66,7 +66,7 @@ export default function WhyPoiroscopeSection() {
         <div className="w-anim" style={{ display: "inline-flex", alignItems: "center", gap: 9, marginBottom: 20 }}>
           <div style={{ width: 16, height: 1.5, background: ORANGE, borderRadius: 2 }} />
           <span style={{
-            fontFamily: "var(--font-family)", fontSize: 11, fontWeight: 700,
+            fontFamily: "var(--font-family)", fontSize: 13, fontWeight: 700,
             textTransform: "uppercase", letterSpacing: "1.4px", color: ORANGE,
           }}>
             Why Poiroscope
@@ -82,7 +82,7 @@ export default function WhyPoiroscopeSection() {
         </h2>
         <p className="w-anim" style={{
           fontFamily: "var(--font-family)",
-          fontSize: "clamp(13px, 1vw, 15.5px)",
+          fontSize: "clamp(14px, 1.2vw, 18px)",
           color: "rgba(255,255,255,0.32)", lineHeight: 1.72,
           maxWidth: 500, margin: "0 auto",
         }}>
@@ -156,7 +156,7 @@ export default function WhyPoiroscopeSection() {
                     width: 32, height: 32, borderRadius: "50%",
                     background: "rgba(255,128,21,0.10)",
                     border: "1px solid rgba(255,128,21,0.26)",
-                    fontFamily: "var(--font-family)", fontSize: 10, fontWeight: 700,
+                    fontFamily: "var(--font-family)", fontSize: 11, fontWeight: 700,
                     letterSpacing: "0.4px", color: ORANGE, alignSelf: "flex-start",
                     flexShrink: 0,
                   }}>
@@ -176,7 +176,7 @@ export default function WhyPoiroscopeSection() {
                   }} />
                   <p style={{
                     fontFamily: "var(--font-family)",
-                    fontSize: "clamp(13px, 1.1vw, 15px)",
+                    fontSize: "clamp(14px, 1.2vw, 17px)",
                     color: "rgba(255,255,255,0.42)", lineHeight: 1.78, margin: 0,
                   }}>
                     {d.body}

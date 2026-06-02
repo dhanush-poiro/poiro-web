@@ -141,9 +141,8 @@ export default function Footer() {
           <div ref={bottomBarRef} className={styles.bottomBar}>
             <p className={styles.copyright}>© 2026 Poiro&nbsp;|&nbsp;All Rights Reserved</p>
             <nav className={styles.links} aria-label="Footer navigation">
-              {/* TODO: replace # with real LinkedIn and Instagram URLs */}
-              <a href="#" className={styles.link} aria-label="Poiro on LinkedIn" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-              <a href="#" className={styles.link} aria-label="Poiro on Instagram" target="_blank" rel="noopener noreferrer">Instagram</a>
+              <a href="https://www.linkedin.com/company/poiro/" className={styles.link} aria-label="Poiro on LinkedIn" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              <a href="https://www.instagram.com/poiro.ai/" className={styles.link} aria-label="Poiro on Instagram" target="_blank" rel="noopener noreferrer">Instagram</a>
             </nav>
           </div>
         </div>

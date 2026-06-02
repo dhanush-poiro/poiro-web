@@ -557,7 +557,7 @@ export default function ScrollCardSplitSection() {
                             </div>
                             <div
                               style={{
-                                fontSize: "clamp(7px, 0.72vw, 10px)",
+                                fontSize: "clamp(12px, 1.1vw, 15px)",
                                 lineHeight: 1.6,
                                 fontWeight: 300,
                                 color: card.subColor,

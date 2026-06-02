@@ -126,7 +126,7 @@ export default function GetStartedSection() {
             <div style={{ width: 16, height: 1.5, background: orange, borderRadius: 2, flexShrink: 0 }} />
             <span style={{
               fontFamily: "var(--font-family)",
-              fontSize: 11, fontWeight: 700,
+              fontSize: 13, fontWeight: 700,
               textTransform: "uppercase", letterSpacing: "1.3px",
               color: orange,
             }}>Get Started</span>
@@ -145,7 +145,7 @@ export default function GetStartedSection() {
           {/* Sub */}
           <p className="gs-anim" style={{
             fontFamily: "var(--font-family)",
-            fontSize: "clamp(13px, 1.05vw, 16px)",
+            fontSize: "clamp(14px, 1.2vw, 17px)",
             color: "rgba(255,255,255,0.35)", lineHeight: 1.7,
             maxWidth: 440, marginBottom: "clamp(36px, 5vw, 52px)",
           }}>
@@ -192,7 +192,7 @@ export default function GetStartedSection() {
                 <span style={{
                   display: "block",
                   fontFamily: "var(--font-family)",
-                  fontSize: 10, fontWeight: 700,
+                  fontSize: 12, fontWeight: 700,
                   textTransform: "uppercase", letterSpacing: "1.1px",
                   color: orange, marginBottom: 14,
                 }}>
@@ -208,7 +208,7 @@ export default function GetStartedSection() {
                 </h4>
                 <p style={{
                   fontFamily: "var(--font-family)",
-                  fontSize: "clamp(12px, 0.93vw, 13.5px)",
+                  fontSize: "clamp(14px, 1.1vw, 16px)",
                   color: "rgba(255,255,255,0.37)", lineHeight: 1.65, margin: 0,
                 }}>
                   {step.body}
@@ -238,7 +238,7 @@ export default function GetStartedSection() {
                   <div style={{
                     display: "inline-block",
                     fontFamily: "var(--font-family)",
-                    fontSize: 9.5, fontWeight: 700,
+                    fontSize: 11, fontWeight: 700,
                     textTransform: "uppercase", letterSpacing: "0.8px",
                     padding: "3px 9px", borderRadius: 20, marginBottom: 12,
                     background: "rgba(255,128,21,0.10)",
@@ -258,7 +258,7 @@ export default function GetStartedSection() {
                 </h4>
                 <p style={{
                   fontFamily: "var(--font-family)",
-                  fontSize: "clamp(12px, 0.93vw, 13.5px)",
+                  fontSize: "clamp(14px, 1.1vw, 16px)",
                   color: "rgba(255,255,255,0.37)", lineHeight: 1.65, margin: 0,
                 }}>
                   {opt.body}
@@ -292,7 +292,7 @@ export default function GetStartedSection() {
                 </h3>
                 <p style={{
                   fontFamily: "var(--font-family)",
-                  fontSize: "clamp(12px, 0.93vw, 14px)",
+                  fontSize: "clamp(14px, 1.1vw, 16px)",
                   color: "rgba(255,255,255,0.36)", margin: 0, lineHeight: 1.6,
                 }}>
                   Get a personalised walkthrough with your brand already in the system.

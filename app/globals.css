@@ -64,27 +64,27 @@
   --text-8xl: 6rem;       /* 96px */
   --text-hero: 8rem;      /* 128px */
 
-  /* Spacing (8px grid) */
-  --space-1: 8px;
-  --space-2: 16px;
-  --space-3: 24px;
-  --space-4: 32px;
-  --space-5: 40px;
-  --space-6: 48px;
-  --space-7: 56px;
-  --space-8: 64px;
-  --space-9: 72px;
-  --space-10: 80px;
-  --space-12: 96px;
-  --space-16: 128px;
-  --space-20: 160px;
-  --space-24: 192px;
+  /* Spacing (8px grid) — rem so these scale with the viewport-responsive html font-size */
+  --space-1: 0.5rem;    /* 8px @ 16px base */
+  --space-2: 1rem;      /* 16px */
+  --space-3: 1.5rem;    /* 24px */
+  --space-4: 2rem;      /* 32px */
+  --space-5: 2.5rem;    /* 40px */
+  --space-6: 3rem;      /* 48px */
+  --space-7: 3.5rem;    /* 56px */
+  --space-8: 4rem;      /* 64px */
+  --space-9: 4.5rem;    /* 72px */
+  --space-10: 5rem;     /* 80px */
+  --space-12: 6rem;     /* 96px */
+  --space-16: 8rem;     /* 128px */
+  --space-20: 10rem;    /* 160px */
+  --space-24: 12rem;    /* 192px */
 
   /* Layout */
   --max-width: 1440px;
   --content-padding: var(--space-6);
   --section-gap: var(--space-20);
-  --navbar-height: 72px;
+  --navbar-height: 4.5rem;  /* 72px @ 16px base */
 
   /* Borders */
   --radius-sm: 4px;

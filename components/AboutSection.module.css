@@ -34,7 +34,7 @@
   text-align: center;
   font-family: var(--font-cormorant), Georgia, serif;
   line-height: 1.15;
-  font-size: clamp(32px, 4.5vw, 68px);
+  font-size: clamp(27px, 3.8vw, 58px); /* reduced for standard/Mac DPI */
   font-weight: 400;
   letter-spacing: -0.02em;
   max-width: min(1300px, 90vw);
@@ -241,4 +241,9 @@
     padding-bottom: 4vh;
     gap: clamp(24px, 4vh, 40px);
   }
+}
+
+/* Windows 125–150% DPI: restore original sizes */
+@media (min-resolution: 1.2dppx) and (max-resolution: 1.6dppx) {
+  .textWrap { font-size: clamp(32px, 4.5vw, 68px); }
 }

@@ -212,7 +212,7 @@ export default function Hero() {
             Engineering Creativity.
           </h1>
           <a href="/get-access" className={styles.ctaBtn} id="hero-cta">
-            Get Access
+            Get access
           </a>
         </div>
 

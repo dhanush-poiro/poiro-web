@@ -134,7 +134,7 @@ export default function StorytellingSection() {
             opacity: 0,
           }}
         >
-          AI brand video is here.{" "}
+          AI brand video is here.<br />
           <em style={{ fontStyle: "italic" }}>The process for it isn&apos;t.</em>
         </h2>
 

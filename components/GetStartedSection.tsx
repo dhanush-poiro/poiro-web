@@ -122,14 +122,21 @@ export default function GetStartedSection() {
         }}>
 
           {/* Eyebrow */}
-          <div className="gs-anim" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-            <div style={{ width: 16, height: 1.5, background: orange, borderRadius: 2, flexShrink: 0 }} />
-            <span style={{
-              fontFamily: "var(--font-family)",
-              fontSize: 13, fontWeight: 700,
-              textTransform: "uppercase", letterSpacing: "1.3px",
-              color: orange,
-            }}>Get Started</span>
+          <div className="gs-anim" style={{ marginBottom: 20 }}>
+            <div style={{
+              display: "inline-block",
+              background: orange,
+              borderRadius: "999px",
+              padding: "8px 24px",
+              boxShadow: "0 4px 14px rgba(255,128,21,0.4)",
+            }}>
+              <span style={{
+                fontFamily: "var(--font-family)",
+                fontSize: "0.80rem", fontWeight: 600,
+                textTransform: "uppercase", letterSpacing: "0.15em",
+                color: "#ffffff",
+              }}>Get Started</span>
+            </div>
           </div>
 
           {/* Heading */}

@@ -63,14 +63,23 @@ export default function WhyPoiroscopeSection() {
         padding: "clamp(72px, 9vw, 120px) clamp(24px, 3vw, 48px) clamp(48px, 6vw, 72px)",
         textAlign: "center",
       }}>
-        <div className="w-anim" style={{ display: "inline-flex", alignItems: "center", gap: 9, marginBottom: 20 }}>
-          <div style={{ width: 16, height: 1.5, background: ORANGE, borderRadius: 2 }} />
-          <span style={{
-            fontFamily: "var(--font-family)", fontSize: 13, fontWeight: 700,
-            textTransform: "uppercase", letterSpacing: "1.4px", color: ORANGE,
+        <div className="w-anim" style={{ marginBottom: 20 }}>
+          <div style={{
+            display: "inline-block",
+            background: ORANGE,
+            borderRadius: "999px",
+            padding: "8px 24px",
+            boxShadow: "0 4px 14px rgba(255,128,21,0.4)",
           }}>
-            Why Poiroscope
-          </span>
+            <span style={{
+              fontFamily: "var(--font-family)",
+              fontSize: "0.80rem", fontWeight: 600,
+              textTransform: "uppercase", letterSpacing: "0.15em",
+              color: "#ffffff",
+            }}>
+              Why Poiroscope
+            </span>
+          </div>
         </div>
         <h2 className="w-anim" style={{
           fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif",

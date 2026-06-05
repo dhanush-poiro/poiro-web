@@ -2,9 +2,9 @@
 .hero {
   /* ── 🛠️ TWEAK VARIABLES ── */
 
-  /* Hand Scaling */
+  /* Hand Scaling — reduced defaults for standard/Mac DPI */
   --hand-width: 44%;
-  --hand-max-width: 560px;
+  --hand-max-width: 480px;
 
   /* Hand Positions */
   --left-hand-top: 0;
@@ -12,12 +12,12 @@
   --right-hand-bottom: 0;
   --right-hand-right: 0;
 
-  /* Hero text & button */
-  --hero-heading-size: clamp(36px, 4.8vw, 76px); /* font-size of "Engineering Creativity." */
-  --hero-gap: 28px;                               /* gap between heading and button          */
-  --hero-btn-padding-v: 13px;                     /* button top/bottom padding               */
-  --hero-btn-padding-h: 52px;                     /* button left/right padding               */
-  --hero-btn-font-size: 16px;                     /* button label font-size                  */
+  /* Hero text & button — reduced defaults for standard/Mac DPI */
+  --hero-heading-size: clamp(30px, 4.1vw, 64px); /* font-size of "Engineering Creativity." */
+  --hero-gap: 24px;                               /* gap between heading and button          */
+  --hero-btn-padding-v: 11px;                     /* button top/bottom padding               */
+  --hero-btn-padding-h: 44px;                     /* button left/right padding               */
+  --hero-btn-font-size: 14px;                     /* button label font-size                  */
 
   /* ──────────────────────────────── */
 
@@ -140,7 +140,7 @@
   font-size: var(--hero-btn-font-size);
   font-weight: 400;
   letter-spacing: 0.03em;
-  text-transform: lowercase;
+  text-transform: none;
   box-shadow:
     0 8px 28px rgba(0, 0, 0, 0.55),
     0 2px 8px  rgba(0, 0, 0, 0.35);
@@ -211,4 +211,16 @@
 
 @media (prefers-reduced-motion: reduce) {
   .scrollLine { animation: none; opacity: 0.5; }
+}
+
+/* Windows 125–150% DPI: restore original sizes (CSS pixels are physically smaller there) */
+@media (min-resolution: 1.2dppx) and (max-resolution: 1.6dppx) {
+  .hero {
+    --hand-max-width: 560px;
+    --hero-heading-size: clamp(36px, 4.8vw, 76px);
+    --hero-gap: 28px;
+    --hero-btn-padding-v: 13px;
+    --hero-btn-padding-h: 52px;
+    --hero-btn-font-size: 16px;
+  }
 }

@@ -120,10 +120,9 @@
 }
 
 html {
-  /* Scale the rem base to compensate for Windows 125% DPI calibration vs Mac standard DPI.
-     Mac laptops typically have 1280–1440px CSS viewport → 0.9vw ≈ 11.5–13px → clamps to 13px (81% of 16).
-     Wide desktop viewports (1778px+) → 0.9vw ≥ 16px → caps at 16px, keeping the desktop layout full-size. */
-  font-size: clamp(13px, 0.9vw, 16px);
+  /* Standard / Mac Retina (DPR ≤ 1.1 or DPR ≥ 1.7): CSS pixels are at standard 96-DPI physical size.
+     Use a smaller rem base so the design doesn't appear 20-25% oversized vs Windows 125% DPI. */
+  font-size: clamp(12px, 0.83vw, 14px);
   scroll-behavior: auto; /* Lenis handles smooth scroll */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -141,6 +140,13 @@ body {
   /* Prevent iOS Safari from auto-scaling fonts on orientation change */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+}
+
+/* Windows 125–150 % DPI (devicePixelRatio 1.25–1.5): CSS pixels are physically smaller than on
+   standard 96-DPI displays, so restore full-size values to compensate. Mac Retina (DPR=2) is
+   excluded by the max-resolution cap, as are standard 100% DPI screens (DPR=1). */
+@media (min-resolution: 1.2dppx) and (max-resolution: 1.6dppx) {
+  html { font-size: clamp(13px, 0.9vw, 16px); }
 }
 
 a {

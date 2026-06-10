@@ -3,6 +3,45 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
+// Resets to frame 0 every time the video enters the viewport so scroll-back
+// always starts from a keyframe — eliminates the mid-stream seek lag spike.
+function ServiceVideo({ src, poster }: { src: string; poster: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.currentTime = 0;
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, [src]);
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      loop
+      muted
+      playsInline
+      preload="none"
+      poster={poster}
+      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+    />
+  );
+}
+
 // ── Product data ──────────────────────────────────────────────────────────────
 interface Service {
   num: string;
@@ -347,20 +386,7 @@ export default function OperatingSystemSection() {
                     }}
                   >
                     {svc.video ? (
-                      <video
-                        src={svc.video}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        poster={svc.img}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          display: "block",
-                        }}
-                      />
+                      <ServiceVideo src={svc.video} poster={svc.img} />
                     ) : (
                       <Image
                         src={svc.img}

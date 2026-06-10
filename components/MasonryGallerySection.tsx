@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition, startTransition } from "react";
 import Masonry, { type MasonryItem } from "@/components/Masonry";
 import { getMediaForFolder } from "@/lib/media-manifest";
 
 type TabConfig = { label: string; folder: string };
 
 const TABS: TabConfig[] = [
-  { label: "Short Form",     folder: "short-form"    },
-  { label: "Statics",        folder: "statics"       },
-  { label: "UGC / Affiliate",folder: "ugc-affiliate" },
-  { label: "TVC / Animatics",folder: "tvc-animatics" },
+  { label: "Short Form",      folder: "short-form"    },
+  { label: "Statics",         folder: "statics"       },
+  { label: "UGC / Affiliate", folder: "ugc-affiliate" },
+  { label: "TVC / Animatics", folder: "tvc-animatics" },
 ];
 
 // Deterministic per-item aspect jitter so the grid never looks uniform
@@ -31,84 +31,103 @@ function mapDisplayAspect(src: number, seed: string): number {
   return Math.min(1.15, Math.max(0.85, aspect * (1 + jitter)));
 }
 
-async function precomputeMedia(items: MasonryItem[]): Promise<MasonryItem[]> {
+// Phase 1: instant — no network, uses default aspect ratios
+function loadCategoryItemsFast(folder: string): MasonryItem[] {
+  return getMediaForFolder(folder).map((item, i) => {
+    const id = `${folder}-${i + 1}`;
+    return {
+      id,
+      src: item.src,
+      type: item.type,
+      url: "https://showcase.poiroscope.com",
+      // Videos default to 9:16; images default to ~1:1 (refined in phase 2)
+      aspectRatio: mapDisplayAspect(
+        item.type === "video" ? 9 / 16 : 1,
+        id
+      ),
+    };
+  });
+}
+
+// Phase 2: async — measure real image dimensions (videos already correct)
+async function refineImageAspects(items: MasonryItem[]): Promise<MasonryItem[]> {
   return Promise.all(
-    items.map(
-      (item) =>
-        new Promise<MasonryItem>((resolve) => {
-          if (item.type === "video") {
-            resolve({ ...item, aspectRatio: 9 / 16 });
-            return;
-          }
-          const img = new window.Image();
-          img.src = item.src;
-          img.onload = () => {
-            const r =
-              img.naturalWidth > 0 && img.naturalHeight > 0
-                ? img.naturalWidth / img.naturalHeight
-                : 1;
-            resolve({ ...item, aspectRatio: mapDisplayAspect(r, item.id) });
-          };
-          img.onerror = () =>
-            resolve({ ...item, aspectRatio: mapDisplayAspect(1, item.id) });
-        })
-    )
+    items.map((item): Promise<MasonryItem> => {
+      if (item.type === "video") return Promise.resolve(item);
+      return new Promise<MasonryItem>((resolve) => {
+        const img = new window.Image();
+        img.onload = () => {
+          const r =
+            img.naturalWidth > 0 && img.naturalHeight > 0
+              ? img.naturalWidth / img.naturalHeight
+              : 1;
+          resolve({ ...item, aspectRatio: mapDisplayAspect(r, item.id) });
+        };
+        img.onerror = () =>
+          resolve({ ...item, aspectRatio: mapDisplayAspect(1, item.id) });
+        img.src = item.src;
+      });
+    })
   );
 }
 
-function loadCategoryItems(folder: string): MasonryItem[] {
-  return getMediaForFolder(folder).map((item, i) => ({
-    id: `${folder}-${i + 1}`,
-    src: item.src,
-    type: item.type,
-    url: "https://showcase.poiroscope.com",
-    aspectRatio: 1,
-  }));
-}
-
 export default function MasonryGallerySection() {
-  const sectionRef       = useRef<HTMLElement | null>(null);
-  const hasBootstrapped  = useRef(false);
+  const sectionRef      = useRef<HTMLElement | null>(null);
+  const hasBootstrapped = useRef(false);
+  // Tracks which folder is the "current" active one to discard stale refinements
+  const activeTabFolderRef = useRef(TABS[0]!.folder);
 
-  const [activeTab, setActiveTab]         = useState<TabConfig>(TABS[0]);
+  const [, startTabTransition] = useTransition();
+
+  const [activeTab, setActiveTab]         = useState<TabConfig>(TABS[0]!);
   const [items, setItems]                 = useState<MasonryItem[]>([]);
   const [itemsByFolder, setItemsByFolder] = useState<Record<string, MasonryItem[]>>({});
-  const [isSwitching, setIsSwitching]     = useState(false);
   const [hasEntered, setHasEntered]       = useState(false);
   const [animationCycle, setAnimationCycle] = useState(0);
 
-  // Bootstrap: load active tab immediately, warm others during idle time
+  // Bootstrap: show first tab instantly, refine images in bg, warm others in parallel
   useEffect(() => {
     if (hasBootstrapped.current) return;
     hasBootstrapped.current = true;
     let cancelled = false;
 
-    const bootstrap = async () => {
-      const loaded   = loadCategoryItems(activeTab.folder);
-      const computed = await precomputeMedia(loaded);
+    const initialFolder = TABS[0]!.folder;
+
+    // Instant: render the grid with fast defaults before any network
+    const fast = loadCategoryItemsFast(initialFolder);
+    setItems(fast);
+
+    // Refine first tab images in background
+    void refineImageAspects(fast).then((refined) => {
       if (cancelled) return;
-
-      setItemsByFolder({ [activeTab.folder]: computed });
-      setItems(computed);
-
-      const warmRest = async () => {
-        for (const tab of TABS) {
-          if (cancelled || tab.folder === activeTab.folder) continue;
-          const c = await precomputeMedia(loadCategoryItems(tab.folder));
-          if (cancelled) return;
-          setItemsByFolder((prev) => ({ ...prev, [tab.folder]: c }));
-        }
-      };
-
-      if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-        (window as Window & { requestIdleCallback: (cb: () => void) => number })
-          .requestIdleCallback(() => { void warmRest(); });
-      } else {
-        setTimeout(() => { void warmRest(); }, 300);
+      setItemsByFolder({ [initialFolder]: refined });
+      // Only update items if user hasn't switched tabs yet
+      if (activeTabFolderRef.current === initialFolder) {
+        startTransition(() => setItems(refined));
       }
+    });
+
+    // Warm remaining tabs in parallel during idle time
+    const warmRest = () => {
+      void Promise.all(
+        TABS
+          .filter((t) => t.folder !== initialFolder)
+          .map(async (tab) => {
+            const fastItems = loadCategoryItemsFast(tab.folder);
+            const refined   = await refineImageAspects(fastItems);
+            if (cancelled) return;
+            setItemsByFolder((prev) => ({ ...prev, [tab.folder]: refined }));
+          })
+      );
     };
 
-    void bootstrap();
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      (window as Window & { requestIdleCallback: (cb: () => void) => number })
+        .requestIdleCallback(warmRest);
+    } else {
+      setTimeout(warmRest, 300);
+    }
+
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -123,33 +142,41 @@ export default function MasonryGallerySection() {
         setAnimationCycle((n) => n + 1);
         observer.disconnect();
       },
-      // 400px early trigger: Masonry renders (and videos start preloading via
-      // preload="metadata") before the section scrolls into view
+      // 400px early trigger: Masonry renders before the section scrolls into view
       { threshold: 0, rootMargin: "400px 0px 0px 0px" }
     );
     observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, []);
 
-  const handleTabChange = async (tab: TabConfig) => {
-    if (tab.folder === activeTab.folder || isSwitching) return;
-    setIsSwitching(true);
+  const handleTabChange = (tab: TabConfig) => {
+    if (tab.folder === activeTabFolderRef.current) return;
+    activeTabFolderRef.current = tab.folder;
 
     const cached = itemsByFolder[tab.folder];
     if (cached) {
-      setItems(cached);
-      setActiveTab(tab);
-      setAnimationCycle((n) => n + 1);
-      setIsSwitching(false);
+      // Fully refined — instant, mark non-urgent
+      startTabTransition(() => {
+        setItems(cached);
+        setActiveTab(tab);
+        setAnimationCycle((n) => n + 1);
+      });
       return;
     }
 
-    const computed = await precomputeMedia(loadCategoryItems(tab.folder));
-    setItemsByFolder((prev) => ({ ...prev, [tab.folder]: computed }));
-    setItems(computed);
-    setActiveTab(tab);
-    setAnimationCycle((n) => n + 1);
-    setIsSwitching(false);
+    // Show fast defaults immediately (no awaiting), then refine in background
+    const fast = loadCategoryItemsFast(tab.folder);
+    startTabTransition(() => {
+      setItems(fast);
+      setActiveTab(tab);
+      setAnimationCycle((n) => n + 1);
+    });
+
+    void refineImageAspects(fast).then((refined) => {
+      if (activeTabFolderRef.current !== tab.folder) return; // user switched again
+      setItemsByFolder((prev) => ({ ...prev, [tab.folder]: refined }));
+      startTransition(() => setItems(refined));
+    });
   };
 
   const tabBase = useMemo<React.CSSProperties>(
@@ -261,9 +288,7 @@ export default function MasonryGallerySection() {
           {/* ── Tabs ────────────────────────────────────────── */}
           <div
             className="mgal-tabs"
-            style={{
-              marginBottom: "clamp(32px, 4vw, 52px)",
-            }}
+            style={{ marginBottom: "clamp(32px, 4vw, 52px)" }}
           >
             {TABS.map((tab) => {
               const active = tab.folder === activeTab.folder;
@@ -272,14 +297,12 @@ export default function MasonryGallerySection() {
                   key={tab.folder}
                   type="button"
                   className="mgal-tab"
-                  onClick={() => { void handleTabChange(tab); }}
-                  disabled={isSwitching}
+                  onClick={() => handleTabChange(tab)}
                   style={{
                     ...tabBase,
-                    background:   active ? "rgba(255,95,31,0.15)" : "rgba(255,255,255,0.04)",
-                    color:        active ? "#ffffff" : "var(--color-text-secondary)",
-                    borderColor:  active ? "#ff8015" : "#374151",
-                    opacity:      isSwitching && !active ? 0.65 : 1,
+                    background:  active ? "rgba(255,95,31,0.15)" : "rgba(255,255,255,0.04)",
+                    color:       active ? "#ffffff" : "var(--color-text-secondary)",
+                    borderColor: active ? "#ff8015" : "#374151",
                   }}
                 >
                   {tab.label}

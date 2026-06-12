@@ -1,7 +1,44 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
+
+// Resets to frame 0 every time the video enters the viewport so scroll-back
+// always starts from a keyframe — eliminates the mid-stream seek lag spike.
+function ServiceVideo({ src }: { src: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.currentTime = 0;
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, [src]);
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      loop
+      muted
+      playsInline
+      preload="none"
+      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+    />
+  );
+}
 
 // ── Product data ──────────────────────────────────────────────────────────────
 interface Service {
@@ -9,9 +46,7 @@ interface Service {
   label: string;
   title: string;
   desc: string;
-  img: string;
-  video?: string; // optional: renders a looping video instead of a static image
-  imgAlt: string;
+  video: string;
 }
 
 const SERVICES: Service[] = [
@@ -20,45 +55,35 @@ const SERVICES: Service[] = [
     label: "Curate & Ideate",
     title: "Ideation Agent",
     desc: "Tap into a living universe of trends and audience signals to create content your consumers can't scroll past. Tracking the best brands and creators in your category, our Ideation Agent parses thousands of hours of content to surface the most compelling ideas, storylines, visual concepts and hooks, so inspiration is never more than a search away. Stay ahead of the curve, always.",
-    img: "/os/brand-cosmos.webp",
-    video: "/os/brand_cosmos.mp4",
-    imgAlt: "Ideation Agent",
+    video: "/os/Brand%20Cosmos.mp4",
   },
   {
     num: "02",
     label: "Collaborate",
     title: "Briefing, Asset & Project Management",
     desc: "Where great ideas become brilliant briefs, and creative teams finally work as one. Ideate with an intelligent briefing agent, curate references from across the web, generate samples and manage feedback — all in one place, so your creative team nails it on the very first iteration. From first spark to final delivery, all in one place.",
-    img: "/os/atlas.webp",
     video: "/os/Atlas.mp4",
-    imgAlt: "Briefing & Asset Management",
   },
   {
     num: "03",
     label: "Create limitlessly",
     title: "Flowboards",
     desc: "From six-second hooks to full-scale TVCs, unleash visual stories at a scale you never thought possible. Collaboratively build creative workflows, choose from 100+ AI models and proprietary pipelines, and take precise control over every step across every channel, every format, every brief. Your imagination is the only limit.",
-    img: "/os/infinite-flow.webp",
-    video: "/os/flowboard.mp4",
-    imgAlt: "Flowboards",
+    video: "/os/Flowboard.mp4",
   },
   {
     num: "04",
     label: "Build Apps",
     title: "App Builder",
     desc: "Turn your creative workflows into powerful no-code apps, so your best ideas scale without limits. Convert even your most complex creative workflows into simple, intuitive apps and put the power of world-class content creation in the hands of everyone in your organisation. Build once, create forever.",
-    img: "/os/appstudio.webp",
-    video: "/os/app_1.mp4",
-    imgAlt: "App Builder",
+    video: "/os/App%201.mp4",
   },
   {
     num: "05",
     label: "Final Touch",
     title: "AI Editing Studio",
     desc: "Polish every pixel, perfect every frame. AI-powered editing, entirely on your terms. Edit images and videos with a level of precision and finesse that was once the preserve of the most skilled editors — because no one understands your creative vision better than you. Because the details are everything.",
-    img: "/os/poiro-studio.webp",
-    video: "/os/AI%20Editing%20Studio.mp4",
-    imgAlt: "AI Editing Studio",
+    video: "/os/Ai%20Editing%20Studio.mp4",
   },
 ];
 
@@ -333,7 +358,7 @@ export default function OperatingSystemSection() {
                     </p>
                   </div>
 
-                  {/* Right column: service image or video */}
+                  {/* Right column: service video */}
                   <div
                     className="os-row-img"
                     style={{
@@ -342,34 +367,12 @@ export default function OperatingSystemSection() {
                       borderRadius: 12,
                       overflow: "hidden",
                       position: "relative",
+                      background: "#0a0a0a",
                       transform: isHovered ? "scale(1.06)" : "scale(1)",
                       transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
                     }}
                   >
-                    {svc.video ? (
-                      <video
-                        src={svc.video}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        poster={svc.img}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          display: "block",
-                        }}
-                      />
-                    ) : (
-                      <Image
-                        src={svc.img}
-                        alt={svc.imgAlt}
-                        fill
-                        style={{ objectFit: "cover" }}
-                        sizes="(max-width: 768px) 90vw, 33vw"
-                      />
-                    )}
+                    <ServiceVideo src={svc.video} />
                   </div>
                 </div>
 

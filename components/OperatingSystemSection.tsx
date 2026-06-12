@@ -23,8 +23,20 @@ function ServiceVideo({ src }: { src: string }) {
       { threshold: 0.15 }
     );
 
+    // Start buffering well before the section scrolls in, so playback is
+    // instant when the play observer fires.
+    const warmObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        video.preload = "auto";
+        warmObserver.disconnect();
+      },
+      { rootMargin: "900px 0px 900px 0px", threshold: 0 }
+    );
+
     observer.observe(video);
-    return () => observer.disconnect();
+    warmObserver.observe(video);
+    return () => { observer.disconnect(); warmObserver.disconnect(); };
   }, [src]);
 
   return (
@@ -69,7 +81,7 @@ const SERVICES: Service[] = [
     label: "Create limitlessly",
     title: "Flowboards",
     desc: "From six-second hooks to full-scale TVCs, unleash visual stories at a scale you never thought possible. Collaboratively build creative workflows, choose from 100+ AI models and proprietary pipelines, and take precise control over every step across every channel, every format, every brief. Your imagination is the only limit.",
-    video: "/os/Flowboard.mp4",
+    video: "/os/flowboard.mp4",
   },
   {
     num: "04",
@@ -83,7 +95,7 @@ const SERVICES: Service[] = [
     label: "Final Touch",
     title: "AI Editing Studio",
     desc: "Polish every pixel, perfect every frame. AI-powered editing, entirely on your terms. Edit images and videos with a level of precision and finesse that was once the preserve of the most skilled editors — because no one understands your creative vision better than you. Because the details are everything.",
-    video: "/os/Ai%20Editing%20Studio.mp4",
+    video: "/os/AI%20Editing%20Studio.mp4",
   },
 ];
 

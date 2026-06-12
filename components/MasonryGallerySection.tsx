@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useTransition, startTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Masonry, { type MasonryItem } from "@/components/Masonry";
 import { getMediaForFolder } from "@/lib/media-manifest";
 
@@ -31,106 +31,37 @@ function mapDisplayAspect(src: number, seed: string): number {
   return Math.min(1.15, Math.max(0.85, aspect * (1 + jitter)));
 }
 
-// Phase 1: instant — no network, uses default aspect ratios
-function loadCategoryItemsFast(folder: string): MasonryItem[] {
+// Build a tab's items straight from the manifest — zero network, zero
+// post-render relayout. Aspect ratios live in the manifest (videos display
+// as 9:16 portrait tiles; images default to square).
+function loadCategoryItems(folder: string): MasonryItem[] {
   return getMediaForFolder(folder).map((item, i) => {
     const id = `${folder}-${i + 1}`;
     return {
       id,
       src: item.src,
       type: item.type,
+      poster: item.poster,
       url: "https://showcase.poiroscope.com",
-      // Videos default to 9:16; images default to ~1:1 (refined in phase 2)
       aspectRatio: mapDisplayAspect(
-        item.type === "video" ? 9 / 16 : 1,
+        item.aspectRatio ?? (item.type === "video" ? 9 / 16 : 1),
         id
       ),
     };
   });
 }
 
-// Phase 2: async — measure real image dimensions (videos already correct)
-async function refineImageAspects(items: MasonryItem[]): Promise<MasonryItem[]> {
-  return Promise.all(
-    items.map((item): Promise<MasonryItem> => {
-      if (item.type === "video") return Promise.resolve(item);
-      return new Promise<MasonryItem>((resolve) => {
-        const img = new window.Image();
-        img.onload = () => {
-          const r =
-            img.naturalWidth > 0 && img.naturalHeight > 0
-              ? img.naturalWidth / img.naturalHeight
-              : 1;
-          resolve({ ...item, aspectRatio: mapDisplayAspect(r, item.id) });
-        };
-        img.onerror = () =>
-          resolve({ ...item, aspectRatio: mapDisplayAspect(1, item.id) });
-        img.src = item.src;
-      });
-    })
-  );
-}
-
 export default function MasonryGallerySection() {
-  const sectionRef      = useRef<HTMLElement | null>(null);
-  const hasBootstrapped = useRef(false);
-  // Tracks which folder is the "current" active one to discard stale refinements
-  const activeTabFolderRef = useRef(TABS[0]!.folder);
+  const sectionRef = useRef<HTMLElement | null>(null);
 
   const [, startTabTransition] = useTransition();
 
-  const [activeTab, setActiveTab]         = useState<TabConfig>(TABS[0]!);
-  const [items, setItems]                 = useState<MasonryItem[]>([]);
-  const [itemsByFolder, setItemsByFolder] = useState<Record<string, MasonryItem[]>>({});
-  const [hasEntered, setHasEntered]       = useState(false);
+  const [activeTab, setActiveTab]           = useState<TabConfig>(TABS[0]!);
+  const [hasEntered, setHasEntered]         = useState(false);
   const [animationCycle, setAnimationCycle] = useState(0);
 
-  // Bootstrap: show first tab instantly, refine images in bg, warm others in parallel
-  useEffect(() => {
-    if (hasBootstrapped.current) return;
-    hasBootstrapped.current = true;
-    let cancelled = false;
-
-    const initialFolder = TABS[0]!.folder;
-
-    // Instant: render the grid with fast defaults before any network
-    const fast = loadCategoryItemsFast(initialFolder);
-    setItems(fast);
-
-    // Refine first tab images in background
-    void refineImageAspects(fast).then((refined) => {
-      if (cancelled) return;
-      setItemsByFolder({ [initialFolder]: refined });
-      // Only update items if user hasn't switched tabs yet
-      if (activeTabFolderRef.current === initialFolder) {
-        startTransition(() => setItems(refined));
-      }
-    });
-
-    // Warm remaining tabs in parallel during idle time
-    const warmRest = () => {
-      void Promise.all(
-        TABS
-          .filter((t) => t.folder !== initialFolder)
-          .map(async (tab) => {
-            const fastItems = loadCategoryItemsFast(tab.folder);
-            const refined   = await refineImageAspects(fastItems);
-            if (cancelled) return;
-            setItemsByFolder((prev) => ({ ...prev, [tab.folder]: refined }));
-          })
-      );
-    };
-
-    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-      (window as Window & { requestIdleCallback: (cb: () => void) => number })
-        .requestIdleCallback(warmRest);
-    } else {
-      setTimeout(warmRest, 300);
-    }
-
-    return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // Derived synchronously — the manifest is static, so no loading states needed
+  const items = useMemo(() => loadCategoryItems(activeTab.folder), [activeTab.folder]);
 
   // Intersection observer — trigger entrance animation once
   useEffect(() => {
@@ -150,32 +81,10 @@ export default function MasonryGallerySection() {
   }, []);
 
   const handleTabChange = (tab: TabConfig) => {
-    if (tab.folder === activeTabFolderRef.current) return;
-    activeTabFolderRef.current = tab.folder;
-
-    const cached = itemsByFolder[tab.folder];
-    if (cached) {
-      // Fully refined — instant, mark non-urgent
-      startTabTransition(() => {
-        setItems(cached);
-        setActiveTab(tab);
-        setAnimationCycle((n) => n + 1);
-      });
-      return;
-    }
-
-    // Show fast defaults immediately (no awaiting), then refine in background
-    const fast = loadCategoryItemsFast(tab.folder);
+    if (tab.folder === activeTab.folder) return;
     startTabTransition(() => {
-      setItems(fast);
       setActiveTab(tab);
       setAnimationCycle((n) => n + 1);
-    });
-
-    void refineImageAspects(fast).then((refined) => {
-      if (activeTabFolderRef.current !== tab.folder) return; // user switched again
-      setItemsByFolder((prev) => ({ ...prev, [tab.folder]: refined }));
-      startTransition(() => setItems(refined));
     });
   };
 

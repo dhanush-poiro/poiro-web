@@ -13,7 +13,6 @@ function isWorkEmail(email: string): boolean {
   return !!domain && !FREE_DOMAINS.has(domain);
 }
 
-
 export default function GetAccessPage() {
   const [email, setEmail]   = useState('');
   const [error, setError]   = useState('');
@@ -41,41 +40,46 @@ export default function GetAccessPage() {
     <>
       <style>{`
         @keyframes ga-rise {
-          from { opacity: 0; transform: translateY(32px); }
+          from { opacity: 0; transform: translateY(28px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        @keyframes ga-slide {
-          from { opacity: 0; transform: translateX(40px); }
-          to   { opacity: 1; transform: translateX(0); }
+        @keyframes ga-frame {
+          from { opacity: 0; transform: perspective(1600px) rotateY(-7deg) translateX(36px); }
+          to   { opacity: 1; transform: perspective(1600px) rotateY(-4deg) translateX(0); }
         }
 
         .ga-page {
           min-height: 100dvh;
-          background: #000;
+          background: #030303;
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: minmax(0, 46fr) minmax(0, 54fr);
           position: relative;
           overflow: hidden;
         }
 
-        /* Ambient glow — bottom-right */
+        /* Ambient warmth — kept low so the page reads as near-black */
+        .ga-page::before {
+          content: '';
+          position: absolute;
+          right: -12%; bottom: -22%;
+          width: 70vw; height: 70vw;
+          background: radial-gradient(circle, rgba(255,128,21,0.09) 0%, transparent 62%);
+          pointer-events: none;
+        }
         .ga-page::after {
           content: '';
           position: absolute;
-          right: -5%;
-          bottom: -15%;
-          width: 65vw;
-          height: 65vw;
-          background: radial-gradient(circle, rgba(255,128,21,0.13) 0%, transparent 60%);
+          left: -18%; top: -28%;
+          width: 50vw; height: 50vw;
+          background: radial-gradient(circle, rgba(255,128,21,0.04) 0%, transparent 65%);
           pointer-events: none;
-          z-index: 0;
         }
 
         .ga-left {
           display: flex;
           flex-direction: column;
           justify-content: center;
-          padding: clamp(100px, 10vh, 140px) clamp(32px, 4vw, 60px) clamp(60px, 8vh, 100px) clamp(60px, 9vw, 140px);
+          padding: clamp(110px, 12vh, 150px) clamp(28px, 3.5vw, 56px) clamp(72px, 9vh, 110px) clamp(56px, 8.5vw, 130px);
           position: relative;
           z-index: 1;
           animation: ga-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -84,85 +88,146 @@ export default function GetAccessPage() {
         .ga-right {
           display: flex;
           align-items: center;
-          padding: clamp(90px, 9vh, 130px) clamp(60px, 9vw, 140px) clamp(60px, 8vh, 100px) clamp(32px, 4vw, 60px);
+          padding: clamp(100px, 10vh, 140px) clamp(48px, 7vw, 110px) clamp(72px, 9vh, 110px) clamp(20px, 2.5vw, 44px);
           position: relative;
           z-index: 1;
-          animation: ga-slide 1s 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+          animation: ga-frame 1.1s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
+
+        /* Hairline between columns */
+        .ga-seam {
+          position: absolute;
+          left: 46%; top: 12%; bottom: 12%;
+          width: 1px;
+          background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.07) 30%, rgba(255,255,255,0.07) 70%, transparent);
+          pointer-events: none;
+        }
+
+        /* Eyebrow */
+        .ga-eyebrow {
+          display: flex; align-items: center; gap: 14px;
+          margin-bottom: clamp(28px, 3.5vh, 40px);
+        }
+        .ga-eyebrow-rule {
+          width: 28px; height: 1px;
+          background: linear-gradient(to right, #ff8015, rgba(255,128,21,0.15));
+        }
+        .ga-eyebrow-text {
+          font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
+          font-size: 11px; font-weight: 600;
+          letter-spacing: 0.22em; text-transform: uppercase;
+          color: rgba(255,128,21,0.85);
+        }
+
+        /* Form */
+        .ga-field {
+          display: flex; align-items: center; gap: 6px;
+          padding: 6px;
+          border-radius: 14px;
+          background: rgba(255,255,255,0.035);
+          border: 1px solid rgba(255,255,255,0.10);
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 18px 50px rgba(0,0,0,0.45);
+          transition: border-color 0.25s ease, box-shadow 0.25s ease;
+          max-width: 480px;
+        }
+        .ga-field:focus-within {
+          border-color: rgba(255,128,21,0.45);
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 18px 50px rgba(0,0,0,0.45), 0 0 0 4px rgba(255,128,21,0.07);
+        }
+        .ga-field.err { border-color: rgba(255,99,99,0.55); }
 
         .ga-input {
-          flex: 1;
-          height: 52px;
-          padding: 0 18px;
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.14);
-          border-radius: 10px;
+          flex: 1; min-width: 0;
+          height: 50px;
+          padding: 0 16px;
+          background: transparent;
+          border: none; outline: none;
           color: #fff;
           font-size: 15px;
-          font-family: "'Helvetica Neue', Arial, sans-serif";
-          outline: none;
-          transition: border-color 0.2s ease, background 0.2s ease;
-          min-width: 0;
+          font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
         }
-        .ga-input::placeholder { color: rgba(255,255,255,0.3); }
-        .ga-input:focus {
-          border-color: #ff8015;
-          background: rgba(255,128,21,0.06);
-        }
-        .ga-input.err { border-color: #ff4444; }
+        .ga-input::placeholder { color: rgba(255,255,255,0.28); }
 
         .ga-submit {
-          height: 52px;
-          padding: 0 clamp(18px, 2vw, 28px);
-          background: linear-gradient(135deg, #ff8015 0%, #ff4500 100%);
-          color: #fff;
-          font-family: "'Helvetica Neue', Arial, sans-serif";
-          font-size: 14px;
-          font-weight: 600;
-          letter-spacing: 0.04em;
-          border-radius: 10px;
-          border: none;
+          height: 50px;
+          padding: 0 clamp(20px, 2.2vw, 30px);
+          border: none; border-radius: 10px;
+          background: linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(240,234,222,0.94) 100%);
+          color: #0c0c0c;
+          font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+          font-size: 17px; font-weight: 500; font-style: italic;
+          letter-spacing: 0.02em;
           cursor: pointer;
           white-space: nowrap;
           flex-shrink: 0;
-          transition: all 0.2s ease;
-          box-shadow: 0 0 24px rgba(255,128,21,0.35);
+          box-shadow: 0 2px 18px rgba(255,255,255,0.10), 0 1px 4px rgba(0,0,0,0.4);
+          transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s cubic-bezier(0.16,1,0.3,1);
         }
         .ga-submit:hover {
           transform: translateY(-1px);
-          box-shadow: 0 0 36px rgba(255,128,21,0.55);
+          box-shadow: 0 6px 30px rgba(255,255,255,0.18), 0 2px 8px rgba(0,0,0,0.5);
         }
-        .ga-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .ga-submit:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 
-        /* Window chrome dot colours */
+        /* Secondary link — inline flow so it wraps naturally on narrow screens */
+        .ga-alt {
+          display: inline;
+          color: rgba(255,255,255,0.45);
+          font-family: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
+          font-size: 13.5px;
+          line-height: 1.9;
+          text-decoration: none;
+          transition: color 0.2s ease;
+        }
+        .ga-alt em {
+          font-family: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+          font-style: italic; font-size: 15px;
+          color: rgba(240,234,222,0.75);
+          transition: color 0.2s ease;
+          margin: 0 6px 0 4px;
+        }
+        .ga-alt:hover em { color: #ff8015; }
+        .ga-alt .ga-alt-arrow {
+          display: inline-block;
+          transition: transform 0.25s ease;
+          color: rgba(255,128,21,0.8);
+        }
+        .ga-alt:hover .ga-alt-arrow { transform: translateX(3px); }
+
+        /* App frame */
+        .ga-frame {
+          border-radius: 16px;
+          overflow: hidden;
+          border: 1px solid rgba(255,255,255,0.10);
+          box-shadow:
+            0 40px 100px rgba(0,0,0,0.8),
+            0 0 0 1px rgba(255,128,21,0.05),
+            0 0 80px rgba(255,128,21,0.06);
+          position: relative;
+          background: #0a0a0a;
+        }
+
         .ga-dot-r { background: #ff5f57; }
         .ga-dot-y { background: #ffbd2e; }
         .ga-dot-g { background: #28c840; }
 
         @media (max-width: 960px) {
           .ga-page { grid-template-columns: 1fr; }
+          .ga-seam { display: none; }
           .ga-left {
-            padding: clamp(96px, 14vh, 130px) clamp(24px, 5vw, 48px) clamp(48px, 8vh, 72px);
+            padding: clamp(110px, 16vh, 140px) clamp(24px, 6vw, 48px) clamp(56px, 8vh, 80px);
           }
           .ga-right { display: none; }
         }
         @media (max-width: 480px) {
-          .ga-form-row { flex-direction: column !important; }
-          .ga-submit { width: 100%; height: 48px; }
-          .ga-input { height: 48px; }
+          .ga-field { flex-direction: column; padding: 8px; gap: 8px; }
+          .ga-input { width: 100%; height: 46px; text-align: left; }
+          .ga-submit { width: 100%; height: 50px; }
         }
       `}</style>
 
       <main className="ga-page">
-
-        {/* Dot grid — SHOW_DOT_GRID: set to true to re-enable */}
-        {false && (
-          <div style={{
-            position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none',
-            backgroundImage: 'radial-gradient(rgba(255,255,255,0.055) 1.5px, transparent 1.5px)',
-            backgroundSize: '44px 44px',
-          }} />
-        )}
+        <div className="ga-seam" />
 
         {/* ── LEFT: form ── */}
         <div className="ga-left">
@@ -172,39 +237,33 @@ export default function GetAccessPage() {
             /* Success state */
             <div style={{ maxWidth: 480 }}>
               <div style={{
-                width: 64, height: 64, borderRadius: '50%',
-                background: 'rgba(255,128,21,0.10)', border: '1.5px solid rgba(255,128,21,0.5)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 32,
+                width: 60, height: 60, borderRadius: '50%',
+                background: 'rgba(255,128,21,0.08)', border: '1px solid rgba(255,128,21,0.45)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 36,
               }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
                   <path d="M5 12l5 5L19 7" stroke="#ff8015" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
               <h1 style={{
-                fontFamily: 'var(--font-cormorant), Georgia, serif',
+                fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif",
                 fontSize: 'clamp(42px, 5vw, 64px)',
                 fontWeight: 400, lineHeight: 1.05, letterSpacing: '-0.025em',
-                color: '#fff', marginBottom: 16,
+                color: 'rgba(240,234,222,0.95)', marginBottom: 18,
               }}>
                 You&apos;re on<br />
                 <em style={{ fontStyle: 'italic', color: '#ff8015' }}>the list.</em>
               </h1>
               <p style={{
-                color: 'rgba(255,255,255,0.42)', fontSize: 16, lineHeight: 1.65,
-                fontFamily: "'Helvetica Neue', Arial, sans-serif", marginBottom: 36,
+                color: 'rgba(255,255,255,0.40)', fontSize: 15.5, lineHeight: 1.7,
+                fontFamily: "var(--font-family, 'Helvetica Neue', Arial, sans-serif)", marginBottom: 40,
+                maxWidth: 360,
               }}>
-                We&apos;ll reach out as soon as we&apos;re ready for you.
+                We review every request personally and will reach out as soon as we&apos;re ready for you.
               </p>
-              <a href="/" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                color: 'rgba(255,255,255,0.55)', fontSize: 14,
-                fontFamily: "'Helvetica Neue', Arial, sans-serif",
-                textDecoration: 'none', transition: 'color 0.2s ease',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#ff8015')}
-              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.55)')}
-              >
-                ← Back to home
+              <a href="/" className="ga-alt">
+                <span style={{ color: 'rgba(255,128,21,0.8)' }}>←</span>
+                <em>Back to home</em>
               </a>
             </div>
 
@@ -213,50 +272,31 @@ export default function GetAccessPage() {
             /* Form state */
             <div style={{ maxWidth: 520 }}>
 
-              {/* Badge */}
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: 7,
-                marginBottom: 32,
-              }}>
-                <div style={{
-                  width: 6, height: 6, borderRadius: '50%', background: '#ff8015',
-                  boxShadow: '0 0 8px #ff8015',
-                }} />
-                <span style={{
-                  fontFamily: "'Helvetica Neue', Arial, sans-serif",
-                  fontSize: 11, fontWeight: 600, letterSpacing: '0.14em',
-                  textTransform: 'uppercase', color: '#ff8015',
-                }}>
-                  Early Access
-                </span>
+              <div className="ga-eyebrow">
+                <span className="ga-eyebrow-rule" />
+                <span className="ga-eyebrow-text">Early Access</span>
               </div>
 
-              {/* Headline */}
               <h1 style={{
-                fontFamily: 'var(--font-cormorant), Georgia, serif',
-                fontSize: 'clamp(46px, 5.5vw, 76px)',
-                fontWeight: 400, lineHeight: 1.0, letterSpacing: '-0.03em',
-                color: '#fff', marginBottom: 20,
+                fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif",
+                fontSize: 'clamp(46px, 5.5vw, 78px)',
+                fontWeight: 400, lineHeight: 1.02, letterSpacing: '-0.03em',
+                color: 'rgba(240,234,222,0.96)', marginBottom: 22,
               }}>
                 Get access to<br />
                 <em style={{ fontStyle: 'italic', color: '#ff8015' }}>Poiroscope.</em>
               </h1>
 
-              {/* Subtitle */}
               <p style={{
-                fontFamily: "'Helvetica Neue', Arial, sans-serif",
-                color: 'rgba(255,255,255,0.38)', fontSize: 15, lineHeight: 1.7,
-                marginBottom: 36, maxWidth: 400,
+                fontFamily: "var(--font-family, 'Helvetica Neue', Arial, sans-serif)",
+                color: 'rgba(255,255,255,0.38)', fontSize: 15, lineHeight: 1.75,
+                marginBottom: 'clamp(32px, 4.5vh, 48px)', maxWidth: 400,
               }}>
                 The AI-native creative OS for ambitious brands — from brief to final output, all in one place.
               </p>
 
-              {/* Form row */}
               <form onSubmit={handleSubmit} noValidate>
-                <div
-                  className="ga-form-row"
-                  style={{ display: 'flex', gap: 10, marginBottom: error ? 10 : 20 }}
-                >
+                <div className={`ga-field${error ? ' err' : ''}`}>
                   <input
                     id="work-email"
                     type="email"
@@ -264,33 +304,57 @@ export default function GetAccessPage() {
                     onChange={e => { setEmail(e.target.value); setError(''); }}
                     placeholder="you@company.com"
                     autoComplete="email"
-                    className={`ga-input${error ? ' err' : ''}`}
+                    className="ga-input"
                     aria-label="Work email"
                   />
                   <button type="submit" disabled={status === 'loading'} className="ga-submit">
-                    {status === 'loading' ? 'Sending…' : 'Request Access →'}
+                    {status === 'loading' ? 'Sending…' : 'Request Access'}
                   </button>
                 </div>
 
                 {error && (
                   <p style={{
-                    color: '#ff6b6b', fontSize: 12, marginBottom: 16,
-                    fontFamily: "'Helvetica Neue', Arial, sans-serif",
-                    display: 'flex', alignItems: 'center', gap: 6,
+                    color: '#ff7d7d', fontSize: 12.5, marginTop: 12, marginBottom: 0,
+                    fontFamily: "var(--font-family, 'Helvetica Neue', Arial, sans-serif)",
                   }}>
-                    <span>⚠</span> {error}
+                    {error}
                   </p>
                 )}
                 {status === 'error' && (
                   <p style={{
-                    color: '#ff6b6b', fontSize: 12, marginBottom: 16,
-                    fontFamily: "'Helvetica Neue', Arial, sans-serif",
+                    color: '#ff7d7d', fontSize: 12.5, marginTop: 12, marginBottom: 0,
+                    fontFamily: "var(--font-family, 'Helvetica Neue', Arial, sans-serif)",
                   }}>
                     Something went wrong. Please try again.
                   </p>
                 )}
+
+                <p style={{
+                  fontFamily: "var(--font-family, 'Helvetica Neue', Arial, sans-serif)",
+                  color: 'rgba(255,255,255,0.22)', fontSize: 12, lineHeight: 1.6,
+                  marginTop: 16, marginBottom: 0,
+                }}>
+                  We&apos;ll only use your email to reach out about access.
+                </p>
               </form>
 
+              {/* Divider + secondary path */}
+              <div style={{
+                marginTop: 'clamp(36px, 5.5vh, 56px)',
+                paddingTop: 'clamp(24px, 3.5vh, 32px)',
+                borderTop: '1px solid rgba(255,255,255,0.06)',
+                maxWidth: 480,
+              }}>
+                <a
+                  href="https://calendly.com/sameer-poiro/poiro-introduction-with-founders"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ga-alt"
+                >
+                  Prefer a walkthrough? <em>Book an intro call with the founders</em>
+                  <span className="ga-alt-arrow">→</span>
+                </a>
+              </div>
 
             </div>
           )}
@@ -302,37 +366,39 @@ export default function GetAccessPage() {
 
             {/* Glow under the frame */}
             <div style={{
-              position: 'absolute', bottom: -40, left: '10%', right: '10%', height: 80,
-              background: 'radial-gradient(ellipse, rgba(255,128,21,0.25) 0%, transparent 70%)',
-              filter: 'blur(20px)',
+              position: 'absolute', bottom: -48, left: '8%', right: '8%', height: 90,
+              background: 'radial-gradient(ellipse, rgba(255,128,21,0.20) 0%, transparent 70%)',
+              filter: 'blur(24px)',
               pointerEvents: 'none',
             }} />
 
-            {/* Browser / app frame */}
-            <div style={{
-              borderRadius: 14,
-              overflow: 'hidden',
-              border: '1px solid rgba(255,255,255,0.12)',
-              boxShadow: '0 32px 80px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,128,21,0.08)',
-              position: 'relative',
-            }}>
+            <div className="ga-frame">
               {/* Window chrome */}
               <div style={{
-                height: 36,
-                background: 'rgba(18,18,18,0.98)',
-                borderBottom: '1px solid rgba(255,255,255,0.07)',
+                height: 38,
+                background: 'rgba(16,16,16,0.98)',
+                borderBottom: '1px solid rgba(255,255,255,0.06)',
                 display: 'flex', alignItems: 'center',
-                padding: '0 14px', gap: 7, flexShrink: 0,
+                padding: '0 16px', gap: 7, flexShrink: 0,
               }}>
-                <div style={{ width: 11, height: 11, borderRadius: '50%' }} className="ga-dot-r" />
-                <div style={{ width: 11, height: 11, borderRadius: '50%' }} className="ga-dot-y" />
-                <div style={{ width: 11, height: 11, borderRadius: '50%' }} className="ga-dot-g" />
+                <div style={{ width: 10, height: 10, borderRadius: '50%' }} className="ga-dot-r" />
+                <div style={{ width: 10, height: 10, borderRadius: '50%' }} className="ga-dot-y" />
+                <div style={{ width: 10, height: 10, borderRadius: '50%' }} className="ga-dot-g" />
                 <div style={{
-                  marginLeft: 12, flex: 1,
-                  height: 20, borderRadius: 5,
-                  background: 'rgba(255,255,255,0.05)',
-                  maxWidth: 240,
-                }} />
+                  marginLeft: 14, flex: 1,
+                  height: 20, borderRadius: 6,
+                  background: 'rgba(255,255,255,0.045)',
+                  maxWidth: 230,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <span style={{
+                    fontFamily: "var(--font-family, 'Helvetica Neue', Arial, sans-serif)",
+                    fontSize: 10, letterSpacing: '0.04em',
+                    color: 'rgba(255,255,255,0.28)',
+                  }}>
+                    poiroscope.com
+                  </span>
+                </div>
               </div>
 
               {/* Screenshot */}

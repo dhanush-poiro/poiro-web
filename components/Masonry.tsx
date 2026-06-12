@@ -19,6 +19,7 @@ export interface MasonryItem {
   type: "image" | "video";
   url: string;
   aspectRatio: number;
+  poster?: string;
 }
 
 interface MasonryProps {
@@ -36,8 +37,19 @@ interface MasonryProps {
 }
 
 // ── Responsive column count ────────────────────────────────────────────────
+function computeCols(): number {
+  if (window.matchMedia("(min-width: 1024px)").matches) return 4;
+  if (window.matchMedia("(min-width: 640px)").matches)  return 3;
+  return 2;
+}
+
 function useColumnCount() {
-  const [cols, setCols] = useState(4);
+  // Lazy init reads the real viewport on first client render — prevents a
+  // 4-column first layout on mobile whose entrance tweens then fight the
+  // corrected 2-column layout (the "overlapping black tiles" glitch).
+  const [cols, setCols] = useState(() =>
+    typeof window === "undefined" ? 4 : computeCols()
+  );
 
   useEffect(() => {
     let rafId: number | null = null;
@@ -46,13 +58,10 @@ function useColumnCount() {
       if (rafId !== null) return;
       rafId = requestAnimationFrame(() => {
         rafId = null;
-        if (window.matchMedia("(min-width: 1024px)").matches)      setCols(4);
-        else if (window.matchMedia("(min-width: 640px)").matches)  setCols(3);
-        else                                                        setCols(2);
+        setCols(computeCols());
       });
     };
 
-    update();
     window.addEventListener("resize", update, { passive: true });
     return () => {
       window.removeEventListener("resize", update);
@@ -150,8 +159,9 @@ export default function Masonry({
   const itemRefs    = useRef<Map<string, HTMLElement>>(new Map());
   const overlayRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const videoRefs   = useRef<Map<string, HTMLVideoElement>>(new Map());
-  // Singleton IO — lives for the component lifetime; videos subscribe/unsubscribe via ref callbacks
-  const ioRef       = useRef<IntersectionObserver | null>(null);
+  // Singleton IOs — live for the component lifetime; videos subscribe/unsubscribe via ref callbacks
+  const ioRef       = useRef<IntersectionObserver | null>(null);  // play/pause at the viewport edge
+  const warmIoRef   = useRef<IntersectionObserver | null>(null);  // start buffering well ahead of it
 
   const getInitialPosition = useCallback(
     (item: MasonryItem & { x: number; y: number; w: number; h: number }) => {
@@ -175,7 +185,10 @@ export default function Masonry({
   // IO cleanup on unmount — creation is lazy (inside the video ref callback)
   // so it happens the instant the first video element mounts, before any effect runs.
   useEffect(() => {
-    return () => { ioRef.current?.disconnect(); ioRef.current = null; };
+    return () => {
+      ioRef.current?.disconnect();     ioRef.current = null;
+      warmIoRef.current?.disconnect(); warmIoRef.current = null;
+    };
   }, []);
 
   // Page-hidden: pause all videos (IO re-plays when tab becomes visible again)
@@ -221,6 +234,11 @@ export default function Masonry({
       // O(1) lookup — no DOM query
       const el = itemRefs.current.get(item.id);
       if (!el) return;
+
+      // Kill any in-flight/pending tween (incl. staggered entrances that
+      // haven't started yet) — otherwise an old tween targeting stale grid
+      // positions finishes AFTER this one and strands the tile mid-layout.
+      gsap.killTweensOf(el);
 
       const target = { x: item.x, y: item.y, width: item.w, height: item.h };
 
@@ -333,21 +351,39 @@ export default function Masonry({
                           { rootMargin: "100px 0px 100px 0px", threshold: 0.1 }
                         );
                       }
+                      if (!warmIoRef.current) {
+                        // One-shot prefetch: flip preload none→auto ~900px before the
+                        // tile scrolls in, so the buffer is ready by the time play() fires.
+                        warmIoRef.current = new IntersectionObserver(
+                          (entries) => {
+                            entries.forEach((entry) => {
+                              if (!entry.isIntersecting) return;
+                              const v = entry.target as HTMLVideoElement;
+                              v.preload = "auto";
+                              warmIoRef.current?.unobserve(v);
+                            });
+                          },
+                          { rootMargin: "900px 0px 900px 0px", threshold: 0 }
+                        );
+                      }
                       videoRefs.current.set(item.id, node);
                       ioRef.current.observe(node);
+                      warmIoRef.current.observe(node);
                     } else {
                       const prev = videoRefs.current.get(item.id);
                       if (prev) {
                         ioRef.current?.unobserve(prev);
+                        warmIoRef.current?.unobserve(prev);
                         videoRefs.current.delete(item.id);
                       }
                     }
                   }}
                   src={item.src}
+                  poster={item.poster}
                   muted
                   loop
                   playsInline
-                  preload="none"     // no network hit on mount; IO triggers load+play when visible
+                  preload="none"     // no network hit on mount; warm IO upgrades to "auto" near viewport
                   style={{
                     position: "absolute", inset: 0,
                     width: "100%", height: "100%",

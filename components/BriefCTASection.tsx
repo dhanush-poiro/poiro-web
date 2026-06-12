@@ -201,15 +201,15 @@ export default function BriefCTASection() {
   const isError     = uploadState === "error";
 
   // Card & button appearance driven by state
-  const cardBg = isSuccess ? "rgba(34,197,94,0.02)"
-    : isUploading ? "rgba(255,128,21,0.02)"
-    : isHovered   ? "rgba(255,128,21,0.015)"
-    : "rgba(5,5,5,0.3)";
+  const cardBg = isSuccess ? "rgba(8,12,8,0.55)"
+    : isUploading ? "rgba(12,8,5,0.55)"
+    : isHovered   ? "rgba(12,9,6,0.60)"
+    : "rgba(7,7,7,0.55)";
 
   const strokeColor = isSuccess  ? "rgba(34,197,94,0.45)"
     : isUploading  ? "rgba(255,128,21,0.45)"
-    : isHovered    ? "rgba(255,128,21,0.55)"
-    : "rgba(80,80,80,0.7)";
+    : isHovered    ? "rgba(255,128,21,0.50)"
+    : "rgba(255,255,255,0.16)";
 
   const btnBg = isIdle
     ? (isHovered ? "#ffffff" : "rgba(10,10,10,0.85)")
@@ -235,8 +235,9 @@ export default function BriefCTASection() {
       style={{
         position: "relative", width: "100%", background: "#020202",
         color: "#fff", overflow: "hidden", zIndex: 10,
-        padding: "clamp(64px, 10vw, 180px) clamp(16px, 3vw, 48px)",
-        display: "flex", justifyContent: "center",
+        minHeight: "100dvh",
+        padding: "clamp(110px, 14vh, 160px) clamp(16px, 3vw, 48px) clamp(64px, 9vh, 110px)",
+        display: "flex", justifyContent: "center", alignItems: "center",
       }}
     >
       <style>{`
@@ -362,13 +363,28 @@ export default function BriefCTASection() {
         }
         .brief-file-remove:hover { color: rgb(248,113,113); }
 
+        .brief-alt-link em { transition: color 0.2s ease; }
+        .brief-alt-link:hover em { color: #ff8015; }
+        .brief-alt-link span { transition: transform 0.25s ease; }
+        .brief-alt-link:hover span { transform: translateX(3px); }
+
         /* ── Mobile section impact ── */
         @media (max-width: 768px) {
           #brief-cta {
-            padding-top: clamp(80px, 14vh, 120px) !important;
-            padding-bottom: clamp(80px, 14vh, 120px) !important;
+            padding-top: clamp(96px, 14vh, 120px) !important;
+            padding-bottom: clamp(64px, 10vh, 100px) !important;
           }
-          #brief-cta h2 { font-size: clamp(42px, 10vw, 72px) !important; line-height: 1.0 !important; }
+          #brief-cta h2 { font-size: clamp(38px, 9vw, 64px) !important; line-height: 1.04 !important; }
+          .brief-steps {
+            grid-template-columns: 1fr !important;
+            gap: 18px;
+          }
+          .brief-step {
+            border-left: none !important;
+            border-top: 1px solid rgba(255,255,255,0.07);
+            padding: 18px 4px 0 !important;
+          }
+          .brief-steps .brief-step:first-child { border-top: none; padding-top: 0 !important; }
           .brief-upload-card {
             min-height: clamp(300px, 44vw, 400px) !important;
             padding: clamp(28px, 5vw, 40px) clamp(16px, 4vw, 24px) clamp(52px, 7vw, 68px) !important;
@@ -426,13 +442,23 @@ export default function BriefCTASection() {
         zIndex: 5, pointerEvents: "none",
       }} />
 
-      {/* Aurora WebGL glow */}
-      <Aurora
-        colorStops={["#F97316", "#F97316", "#EF4444"]}
-        amplitude={1.1}
-        blend={0.52}
-        speed={0.5}
-      />
+      {/* Aurora WebGL glow — masked so it stays saturated up top (behind the
+          headline) and dissolves into pure black past the card. A translucent
+          dark overlay would grey it out; an alpha mask keeps the color vivid. */}
+      <div style={{
+        position: "absolute", inset: 0, pointerEvents: "none",
+        maskImage:
+          "linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.65) 40%, rgba(0,0,0,0.25) 68%, transparent 92%)",
+        WebkitMaskImage:
+          "linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.65) 40%, rgba(0,0,0,0.25) 68%, transparent 92%)",
+      }}>
+        <Aurora
+          colorStops={["#F97316", "#F97316", "#EF4444"]}
+          amplitude={1.1}
+          blend={0.52}
+          speed={0.5}
+        />
+      </div>
 
       {/* ── Content ── */}
       <div style={{
@@ -441,28 +467,47 @@ export default function BriefCTASection() {
       }}>
 
         {/* Header */}
-        <div style={{ width: "100%", maxWidth: 1120, margin: "0 auto", textAlign: "center", marginBottom: "clamp(24px, 4vw, 60px)" }}>
+        <div style={{ width: "100%", maxWidth: 760, margin: "0 auto", textAlign: "center", marginBottom: "clamp(32px, 5vh, 56px)" }}>
+          {/* Eyebrow */}
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: 14,
+            marginBottom: "clamp(20px, 3vh, 28px)",
+          }}>
+            <span style={{ width: 26, height: 1, background: "linear-gradient(to right, rgba(255,128,21,0.15), #ff8015)" }} />
+            <span style={{
+              fontFamily: "var(--font-family)",
+              fontSize: 11, fontWeight: 600,
+              letterSpacing: "0.22em", textTransform: "uppercase",
+              color: "rgba(255,128,21,0.85)",
+            }}>
+              Work With Us
+            </span>
+            <span style={{ width: 26, height: 1, background: "linear-gradient(to left, rgba(255,128,21,0.15), #ff8015)" }} />
+          </div>
+
           <h2 style={{
             fontFamily: "var(--font-cormorant, 'Cormorant Garamond', Georgia, serif)",
-            fontSize: "clamp(36px, 6vw, 88px)",
-            fontWeight: 300,
-            color: "#fff",
-            letterSpacing: "-0.02em",
-            lineHeight: 1.05,
+            fontSize: "clamp(42px, 5.5vw, 76px)",
+            fontWeight: 400,
+            color: "rgba(240,234,222,0.96)",
+            letterSpacing: "-0.025em",
+            lineHeight: 1.04,
             margin: 0,
           }}>
-            <span className="brief-text-flow">Unbelievable</span> right?
+            Send us your <em className="brief-text-flow" style={{ fontStyle: "italic" }}>brief.</em>
           </h2>
           <p style={{
             fontFamily: "var(--font-family)",
-            marginTop: "clamp(10px, 2vw, 18px)",
-            fontSize: "clamp(14px, 1.6vw, 22px)",
-            lineHeight: 1.45,
-            fontWeight: 400,
-            color: "rgba(255,255,255,0.45)",
+            margin: "clamp(14px, 2.5vh, 22px) auto 0",
+            fontSize: "clamp(14px, 1.3vw, 17px)",
+            lineHeight: 1.7,
+            fontWeight: 300,
+            color: "rgba(255,255,255,0.42)",
             letterSpacing: "0.01em",
+            maxWidth: 460,
           }}>
-            Send Us Your Idea &amp; We&apos;ll Bring It To Life.
+            Goals, audience, formats, references — share what you have,
+            and we&apos;ll bring it to life.
           </p>
         </div>
 
@@ -474,17 +519,19 @@ export default function BriefCTASection() {
           className="brief-upload-card"
           style={{
             position: "relative",
-            width: "100%", maxWidth: 1120,
-            borderRadius: 32,
+            width: "100%", maxWidth: 780,
+            borderRadius: 24,
             display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-            padding: "clamp(44px, 7vw, 80px) clamp(20px, 4vw, 40px)",
-            minHeight: "clamp(240px, 30vw, 380px)",
+            padding: "clamp(40px, 6vw, 64px) clamp(20px, 4vw, 40px) clamp(56px, 7vw, 76px)",
+            minHeight: "clamp(240px, 26vw, 340px)",
             cursor: isIdle ? "pointer" : isUploading ? "wait" : "default",
             transition: "background 0.6s ease, box-shadow 0.6s ease",
             background: cardBg,
-            boxShadow: isSuccess ? "inset 0 0 80px rgba(34,197,94,0.04)"
-              : isUploading ? "inset 0 0 80px rgba(255,95,31,0.04)"
-              : "inset 0 0 60px rgba(0,0,0,0.55)",
+            backdropFilter: "blur(14px)",
+            WebkitBackdropFilter: "blur(14px)",
+            boxShadow: isSuccess ? "0 30px 90px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 0 80px rgba(34,197,94,0.04)"
+              : isUploading ? "0 30px 90px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 0 80px rgba(255,95,31,0.04)"
+              : "0 30px 90px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)",
           }}
         >
           {/* Dashed SVG border */}
@@ -492,7 +539,7 @@ export default function BriefCTASection() {
             <svg className="brief-dash-border" width="100%" height="100%" style={{ position: "absolute", inset: 0, overflow: "visible" }}>
               <rect
                 x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)"
-                rx="30" fill="none" strokeWidth="1.5" strokeDasharray={isMobile ? "6 8" : "10 10"}
+                rx="22" fill="none" strokeWidth="1" strokeDasharray={isMobile ? "5 7" : "7 9"}
                 stroke={strokeColor}
                 style={{ transition: "stroke 0.6s ease" }}
               />
@@ -653,6 +700,76 @@ export default function BriefCTASection() {
             {uploadMsg}
           </p>
         )}
+
+        {/* ── Process steps ── */}
+        <div className="brief-steps" style={{
+          width: "100%", maxWidth: 780,
+          display: "grid", gridTemplateColumns: "1fr 1fr 1fr",
+          marginTop: "clamp(36px, 5.5vh, 56px)",
+        }}>
+          {[
+            { num: "01", title: "Share your brief",  body: "A deck, a doc, or just a paragraph — whatever you have." },
+            { num: "02", title: "We scope it",       body: "Approach, formats and timeline, mapped to your goals." },
+            { num: "03", title: "Creation begins",   body: "From first cuts to final output, we own the quality." },
+          ].map((s, i) => (
+            <div key={s.num} className="brief-step" style={{
+              padding: "4px clamp(14px, 2.5vw, 28px)",
+              borderLeft: i > 0 ? "1px solid rgba(255,255,255,0.07)" : "none",
+            }}>
+              <span style={{
+                fontFamily: "var(--font-family)",
+                fontSize: 11, fontWeight: 600, letterSpacing: "0.08em",
+                color: "rgba(255,128,21,0.7)",
+                display: "block", marginBottom: 8,
+              }}>
+                ({s.num})
+              </span>
+              <h3 style={{
+                fontFamily: "var(--font-cormorant, 'Cormorant Garamond', Georgia, serif)",
+                fontSize: "clamp(18px, 1.8vw, 23px)",
+                fontWeight: 500, letterSpacing: "-0.01em",
+                color: "rgba(240,234,222,0.88)",
+                margin: "0 0 7px",
+              }}>
+                {s.title}
+              </h3>
+              <p style={{
+                fontFamily: "var(--font-family)",
+                fontSize: "clamp(12px, 1vw, 13.5px)",
+                fontWeight: 300,
+                color: "rgba(255,255,255,0.34)",
+                lineHeight: 1.65, margin: 0,
+              }}>
+                {s.body}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Secondary path */}
+        <a
+          href="https://calendly.com/sameer-poiro/poiro-introduction-with-founders"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="brief-alt-link"
+          style={{
+            display: "inline-flex", alignItems: "center", gap: 8,
+            marginTop: "clamp(32px, 4.5vh, 44px)",
+            fontFamily: "var(--font-family)",
+            fontSize: 13.5, color: "rgba(255,255,255,0.42)",
+            textDecoration: "none",
+          }}
+        >
+          Prefer to talk it through?{" "}
+          <em style={{
+            fontFamily: "var(--font-cormorant, 'Cormorant Garamond', Georgia, serif)",
+            fontStyle: "italic", fontSize: 15.5,
+            color: "rgba(240,234,222,0.78)",
+          }}>
+            Book an intro call with the founders
+          </em>
+          <span style={{ color: "rgba(255,128,21,0.85)" }}>→</span>
+        </a>
       </div>
 
       {/* ── Modal ── */}

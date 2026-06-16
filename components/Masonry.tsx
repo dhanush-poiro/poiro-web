@@ -159,9 +159,9 @@ export default function Masonry({
   const itemRefs    = useRef<Map<string, HTMLElement>>(new Map());
   const overlayRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const videoRefs   = useRef<Map<string, HTMLVideoElement>>(new Map());
-  // Singleton IOs — live for the component lifetime; videos subscribe/unsubscribe via ref callbacks
-  const ioRef       = useRef<IntersectionObserver | null>(null);  // play/pause at the viewport edge
-  const warmIoRef   = useRef<IntersectionObserver | null>(null);  // start buffering well ahead of it
+  // Singleton IO — lives for the component lifetime; videos subscribe/unsubscribe via ref callbacks.
+  // Plays on enter (streaming on demand), pauses on exit so off-screen clips stop downloading.
+  const ioRef       = useRef<IntersectionObserver | null>(null);
 
   const getInitialPosition = useCallback(
     (item: MasonryItem & { x: number; y: number; w: number; h: number }) => {
@@ -187,7 +187,6 @@ export default function Masonry({
   useEffect(() => {
     return () => {
       ioRef.current?.disconnect();     ioRef.current = null;
-      warmIoRef.current?.disconnect(); warmIoRef.current = null;
     };
   }, []);
 
@@ -337,46 +336,32 @@ export default function Masonry({
                             entries.forEach((entry) => {
                               const v = entry.target as HTMLVideoElement;
                               if (entry.isIntersecting) {
-                                // Restart from keyframe only when resuming from paused —
-                                // don't disrupt a video that's already playing mid-scroll.
+                                // play() streams on demand and triggers the fetch on
+                                // iOS Safari. Restart from keyframe only when resuming
+                                // from paused — don't disrupt one already playing.
                                 if (v.paused) {
                                   v.currentTime = 0;
                                   v.play().catch(() => {});
                                 }
                               } else {
+                                // Pause on exit: stops the browser buffering ahead so
+                                // off-screen clips don't keep downloading. The 200px
+                                // lead margin starts the visible clip a touch early;
+                                // the poster covers the gap. No eager full-file
+                                // prefetch — that saturated mobile bandwidth.
                                 v.pause();
                               }
                             });
                           },
-                          { rootMargin: "100px 0px 100px 0px", threshold: 0.1 }
-                        );
-                      }
-                      if (!warmIoRef.current) {
-                        // One-shot prefetch: flip preload none→auto ~900px before the
-                        // tile scrolls in, so the buffer is ready by the time play() fires.
-                        // preload="auto" alone is ignored by iOS Safari after mount, so
-                        // load() is called to actually start the network fetch.
-                        warmIoRef.current = new IntersectionObserver(
-                          (entries) => {
-                            entries.forEach((entry) => {
-                              if (!entry.isIntersecting) return;
-                              const v = entry.target as HTMLVideoElement;
-                              v.preload = "auto";
-                              v.load();
-                              warmIoRef.current?.unobserve(v);
-                            });
-                          },
-                          { rootMargin: "900px 0px 900px 0px", threshold: 0 }
+                          { rootMargin: "200px 0px 200px 0px", threshold: 0.1 }
                         );
                       }
                       videoRefs.current.set(item.id, node);
                       ioRef.current.observe(node);
-                      warmIoRef.current.observe(node);
                     } else {
                       const prev = videoRefs.current.get(item.id);
                       if (prev) {
                         ioRef.current?.unobserve(prev);
-                        warmIoRef.current?.unobserve(prev);
                         videoRefs.current.delete(item.id);
                       }
                     }

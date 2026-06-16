@@ -13,27 +13,21 @@ const TABS: TabConfig[] = [
   { label: "TVC / Animatics", folder: "tvc-animatics" },
 ];
 
-// Deterministic per-item aspect jitter so the grid never looks uniform
-function hashToUnit(seed: string): number {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i++) {
-    hash = (hash << 5) - hash + seed.charCodeAt(i);
-    hash |= 0;
-  }
-  return (Math.abs(hash) % 1000) / 1000;
-}
+// Clean aspect-ratio buckets. Each clip is snapped to whichever it's closest
+// to — never forced into one shape. Portrait, square and landscape all coexist.
+//   9:16 = 0.5625 · 3:4 = 0.75 · 1:1 = 1 · 4:3 = 1.333 · 16:9 = 1.778
+const ASPECT_BUCKETS = [9 / 16, 3 / 4, 1, 4 / 3, 16 / 9];
 
-function mapDisplayAspect(src: number, seed: string): number {
+function snapAspect(src: number): number {
   const aspect = Number.isFinite(src) && src > 0 ? src : 1;
-  const jitter = (hashToUnit(seed) - 0.5) * 0.08;
-  if (aspect >= 1.35) return Math.min(2.0,  Math.max(1.35, aspect * (1 + jitter)));
-  if (aspect <= 0.78) return Math.min(0.78, Math.max(0.5,  aspect * (1 + jitter)));
-  return Math.min(1.15, Math.max(0.85, aspect * (1 + jitter)));
+  return ASPECT_BUCKETS.reduce((best, b) =>
+    Math.abs(b - aspect) < Math.abs(best - aspect) ? b : best
+  );
 }
 
 // Build a tab's items straight from the manifest — zero network, zero
-// post-render relayout. Aspect ratios live in the manifest (videos display
-// as 9:16 portrait tiles; images default to square).
+// post-render relayout. The manifest carries each clip's true intrinsic
+// aspect; we snap it to the nearest clean bucket for display.
 function loadCategoryItems(folder: string): MasonryItem[] {
   return getMediaForFolder(folder).map((item, i) => {
     const id = `${folder}-${i + 1}`;
@@ -43,10 +37,7 @@ function loadCategoryItems(folder: string): MasonryItem[] {
       type: item.type,
       poster: item.poster,
       url: "https://showcase.poiroscope.com",
-      aspectRatio: mapDisplayAspect(
-        item.aspectRatio ?? (item.type === "video" ? 9 / 16 : 1),
-        id
-      ),
+      aspectRatio: snapAspect(item.aspectRatio ?? 1),
     };
   });
 }

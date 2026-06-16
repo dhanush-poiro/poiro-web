@@ -354,12 +354,15 @@ export default function Masonry({
                       if (!warmIoRef.current) {
                         // One-shot prefetch: flip preload none→auto ~900px before the
                         // tile scrolls in, so the buffer is ready by the time play() fires.
+                        // preload="auto" alone is ignored by iOS Safari after mount, so
+                        // load() is called to actually start the network fetch.
                         warmIoRef.current = new IntersectionObserver(
                           (entries) => {
                             entries.forEach((entry) => {
                               if (!entry.isIntersecting) return;
                               const v = entry.target as HTMLVideoElement;
                               v.preload = "auto";
+                              v.load();
                               warmIoRef.current?.unobserve(v);
                             });
                           },

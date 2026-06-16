@@ -4,7 +4,9 @@ import { useState, useEffect, useRef } from "react";
 
 // Resets to frame 0 every time the video enters the viewport so scroll-back
 // always starts from a keyframe — eliminates the mid-stream seek lag spike.
-function ServiceVideo({ src }: { src: string }) {
+// A poster (first content frame) shows instantly so the tile is never an empty
+// black box while the video streams in — critical on mobile/slow connections.
+function ServiceVideo({ src, poster }: { src: string; poster?: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -24,11 +26,14 @@ function ServiceVideo({ src }: { src: string }) {
     );
 
     // Start buffering well before the section scrolls in, so playback is
-    // instant when the play observer fires.
+    // instant when the play observer fires. Setting preload="auto" alone is a
+    // no-op on iOS Safari — it ignores the property change after mount — so we
+    // also call load() to actually kick off the network fetch.
     const warmObserver = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
         video.preload = "auto";
+        video.load();
         warmObserver.disconnect();
       },
       { rootMargin: "900px 0px 900px 0px", threshold: 0 }
@@ -43,6 +48,7 @@ function ServiceVideo({ src }: { src: string }) {
     <video
       ref={videoRef}
       src={src}
+      poster={poster}
       loop
       muted
       playsInline
@@ -59,6 +65,7 @@ interface Service {
   title: string;
   desc: string;
   video: string;
+  poster: string;
 }
 
 const SERVICES: Service[] = [
@@ -68,6 +75,7 @@ const SERVICES: Service[] = [
     title: "Ideation Agent",
     desc: "Tap into a living universe of trends and audience signals to create content your consumers can't scroll past. Tracking the best brands and creators in your category, our Ideation Agent parses thousands of hours of content to surface the most compelling ideas, storylines, visual concepts and hooks, so inspiration is never more than a search away. Stay ahead of the curve, always.",
     video: "/os/Brand%20Cosmos.mp4",
+    poster: "/posters/os/Brand%20Cosmos.webp",
   },
   {
     num: "02",
@@ -75,6 +83,7 @@ const SERVICES: Service[] = [
     title: "Briefing, Asset & Project Management",
     desc: "Where great ideas become brilliant briefs, and creative teams finally work as one. Ideate with an intelligent briefing agent, curate references from across the web, generate samples and manage feedback — all in one place, so your creative team nails it on the very first iteration. From first spark to final delivery, all in one place.",
     video: "/os/Atlas.mp4",
+    poster: "/posters/os/Atlas.webp",
   },
   {
     num: "03",
@@ -82,6 +91,7 @@ const SERVICES: Service[] = [
     title: "Flowboards",
     desc: "From six-second hooks to full-scale TVCs, unleash visual stories at a scale you never thought possible. Collaboratively build creative workflows, choose from 100+ AI models and proprietary pipelines, and take precise control over every step across every channel, every format, every brief. Your imagination is the only limit.",
     video: "/os/flowboard.mp4",
+    poster: "/posters/os/Flowboard.webp",
   },
   {
     num: "04",
@@ -89,6 +99,7 @@ const SERVICES: Service[] = [
     title: "App Builder",
     desc: "Turn your creative workflows into powerful no-code apps, so your best ideas scale without limits. Convert even your most complex creative workflows into simple, intuitive apps and put the power of world-class content creation in the hands of everyone in your organisation. Build once, create forever.",
     video: "/os/App%201.mp4",
+    poster: "/posters/os/App%201.webp",
   },
   {
     num: "05",
@@ -96,6 +107,7 @@ const SERVICES: Service[] = [
     title: "AI Editing Studio",
     desc: "Polish every pixel, perfect every frame. AI-powered editing, entirely on your terms. Edit images and videos with a level of precision and finesse that was once the preserve of the most skilled editors — because no one understands your creative vision better than you. Because the details are everything.",
     video: "/os/AI%20Editing%20Studio.mp4",
+    poster: "/posters/os/AI%20Editing%20Studio.webp",
   },
 ];
 
@@ -384,7 +396,7 @@ export default function OperatingSystemSection() {
                       transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
                     }}
                   >
-                    <ServiceVideo src={svc.video} />
+                    <ServiceVideo src={svc.video} poster={svc.poster} />
                   </div>
                 </div>
 

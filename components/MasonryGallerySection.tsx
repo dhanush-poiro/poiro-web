@@ -13,22 +13,24 @@ const TABS: TabConfig[] = [
   { label: "TVC / Animatics", folder: "tvc-animatics" },
 ];
 
-// Each tile is rendered at its source's TRUE native aspect ratio — a 9:16
-// vertical shows as 9:16, a square as 1:1, a 16:9 clip as 16:9, a 3:2 as 3:2.
-// No snapping, no forcing: the tile is exactly the clip's shape, so the poster
-// and video fill it with zero cropping or distortion. The manifest carries the
-// real ratio per clip (see media-manifest.ts).
-const MIN_ASPECT = 0.45; // guard against pathological values; matches Masonry clamp
-const MAX_ASPECT = 2.2;
-
-function nativeAspect(src: number | undefined): number {
-  const aspect = Number.isFinite(src) && (src as number) > 0 ? (src as number) : 1;
-  return Math.min(MAX_ASPECT, Math.max(MIN_ASPECT, aspect));
-}
+// Per-tab tile shape. Every tile in a tab is rendered at the tab's chosen
+// aspect — vertical short-form/UGC, square statics, widescreen TVC. The clip
+// fills the tile with object-fit: cover, so landscape sources are centre-
+// cropped into a vertical frame (and vice-versa). This is a deliberate
+// editorial choice for a consistent grid, independent of each clip's encoding.
+//   9:16 = 0.5625 · 1:1 = 1 · 16:9 = 1.778
+const FOLDER_ASPECT: Record<string, number> = {
+  "short-form":    9 / 16,
+  "statics":       1,
+  "ugc-affiliate": 9 / 16,
+  "tvc-animatics": 16 / 9,
+};
+const DEFAULT_ASPECT = 1;
 
 // Build a tab's items straight from the manifest — zero network, zero
 // post-render relayout.
 function loadCategoryItems(folder: string): MasonryItem[] {
+  const aspect = FOLDER_ASPECT[folder] ?? DEFAULT_ASPECT;
   return getMediaForFolder(folder).map((item, i) => {
     const id = `${folder}-${i + 1}`;
     return {
@@ -37,7 +39,7 @@ function loadCategoryItems(folder: string): MasonryItem[] {
       type: item.type,
       poster: item.poster,
       url: "https://showcase.poiroscope.com",
-      aspectRatio: nativeAspect(item.aspectRatio),
+      aspectRatio: aspect,
     };
   });
 }

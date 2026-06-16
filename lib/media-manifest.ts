@@ -49,7 +49,7 @@ const MANIFEST: Record<string, MediaItem[]> = {
     { src: "/tvc-animatics/Advanced%20Animatics%20-%20Mitu%20Baby.mp4",                         type: "video", poster: "/posters/tvc-animatics/Advanced%20Animatics%20-%20Mitu%20Baby.webp",                         aspectRatio: 1.778 },
     { src: "/tvc-animatics/Advanced%20Animatics%20-%20NYU.mp4",                                 type: "video", poster: "/posters/tvc-animatics/Advanced%20Animatics%20-%20NYU.webp",                                 aspectRatio: 1.778 },
     { src: "/tvc-animatics/Animated%20Commercial%20-%20Cap%20Gajah.mp4",                        type: "video", poster: "/posters/tvc-animatics/Animated%20Commercial%20-%20Cap%20Gajah.webp",                        aspectRatio: 1.778 },
-    { src: "/tvc-animatics/Live%20Action%20Commercial%20%28preview%20version%29%20-%20HIT.mp4", type: "video", poster: "/posters/tvc-animatics/Live%20Action%20Commercial%20%28preview%20version%29%20-%20HIT.webp", aspectRatio: 1.778 },
+    { src: "/tvc-animatics/Live%20Action%20Commercial%20(preview%20version)%20-%20HIT.mp4", type: "video", poster: "/posters/tvc-animatics/Live%20Action%20Commercial%20(preview%20version)%20-%20HIT.webp", aspectRatio: 1.778 },
     { src: "/tvc-animatics/Product%20Ad%20-%20Stella%20Electric.mp4",                           type: "video", poster: "/posters/tvc-animatics/Product%20Ad%20-%20Stella%20Electric.webp",                           aspectRatio: 1.778 },
   ],
 };

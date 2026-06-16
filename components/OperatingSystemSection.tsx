@@ -13,6 +13,13 @@ function ServiceVideo({ src, poster }: { src: string; poster?: string }) {
     const video = videoRef.current;
     if (!video) return;
 
+    // Play-on-visible (streams on demand) with a small lead margin so loading
+    // starts just before the tile is fully in view; the poster covers the gap.
+    // Calling play() also triggers the fetch on iOS Safari (which ignores a
+    // post-mount preload change). Pausing on exit stops the browser buffering
+    // ahead — so off-screen clips don't keep downloading. This deliberately
+    // avoids preload="auto"+load(), which downloads whole files and keeps going
+    // after scroll-away, piling up many multi-MB downloads at once on mobile.
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -22,26 +29,11 @@ function ServiceVideo({ src, poster }: { src: string; poster?: string }) {
           video.pause();
         }
       },
-      { threshold: 0.15 }
-    );
-
-    // Start buffering well before the section scrolls in, so playback is
-    // instant when the play observer fires. Setting preload="auto" alone is a
-    // no-op on iOS Safari — it ignores the property change after mount — so we
-    // also call load() to actually kick off the network fetch.
-    const warmObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        video.preload = "auto";
-        video.load();
-        warmObserver.disconnect();
-      },
-      { rootMargin: "900px 0px 900px 0px", threshold: 0 }
+      { threshold: 0.15, rootMargin: "200px 0px 200px 0px" }
     );
 
     observer.observe(video);
-    warmObserver.observe(video);
-    return () => { observer.disconnect(); warmObserver.disconnect(); };
+    return () => observer.disconnect();
   }, [src]);
 
   return (

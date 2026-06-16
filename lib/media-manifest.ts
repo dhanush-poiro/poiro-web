@@ -5,9 +5,11 @@
 //                 shown instantly while the video buffers. Regenerate when a
 //                 video changes:
 //                 ffmpeg -i in.mp4 -frames:v 1 -vf "scale=640:-2" -c:v libwebp -quality 78 out.webp
-// `aspectRatio` — intrinsic width/height. Optional; images default to 1 (square),
-//                 videos default to 9/16 portrait display. Set it only when an
-//                 image is not square.
+// `aspectRatio` — TRUE intrinsic width/height of the source (e.g. 1.778 for a
+//                 1280x720 clip, 1.0 for a square, 0.5625 for a 9:16 vertical).
+//                 The gallery snaps this to the nearest clean bucket
+//                 (9:16, 3:4, 1:1, 4:3, 16:9) for display — so just record the
+//                 real ratio here. Omit for square sources (defaults to 1).
 
 export type MediaType = "image" | "video";
 export interface MediaItem {
